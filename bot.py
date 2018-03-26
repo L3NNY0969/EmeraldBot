@@ -31,4 +31,4 @@ class Audio:
         await ctx.send("Currently playing **{}**".format(player.title))
 
 client.add_cog(Audio(client))
-client.run(o)
+client.run(os.environ.get('DISCORD'))
