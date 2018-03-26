@@ -27,12 +27,11 @@ class Downloader(discord.PCMVolumeTransformer):
         super().__init__(source, 0.5)
         self.title = data.get('title')
         self.url = data.get('url')
-        self.pool = ThreadPoolExecutor(max_workers=5)
     
     @classmethod
-    async def download(cls, url, *, loop=None, stream=False):
+    async def download(cls, self, url, *, loop=None, stream=False):
         loop = loop  or asyncio.get_event_loop()
-        data = await loop.run_in_executor(self.pool, lambda: ytdl.extract_info(url, download=not stream))
+        data = await loop.run_in_executor(ThreadPoolExecutor(max_workers=5), lambda: ytdl.extract_info(url, download=not stream))
         if 'entries' in data:
             data = data['entries'][0]
         
