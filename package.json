@@ -1,0 +1,34 @@
+{
+  "name": "emeraldbot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IceeMC/EmeraldBot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IceeMC/EmeraldBot/issues"
+  },
+  "homepage": "https://github.com/IceeMC/EmeraldBot#readme",
+  "dependencies": {
+    "canvas-prebuilt": "^1.6.5-prerelease.1",
+    "cpu-stat": "^2.0.1",
+    "discord.js": "^11.3.2",
+    "ffmpeg-binaries": "^3.2.2-3",
+    "moment": "^2.21.0",
+    "network-speed": "^1.2.1",
+    "opusscript": "0.0.6",
+    "request": "^2.85.0",
+    "speedtest-net": "^1.4.2",
+    "sqlite": "^2.9.1",
+    "superagent": "^3.8.2",
+    "yt-api": "^0.2.4",
+    "ytdl-core": "^0.20.2"
+  }
+}
