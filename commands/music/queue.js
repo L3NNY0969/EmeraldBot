@@ -1,5 +1,5 @@
 module.exports.run = async (bot, msg, args) => {
-    let player = bot.players[msg.guild.id];
+    let player = global.players.get(msg.guild.id);
     if(player && player.playing) {
         let format = "";
         for(let songNum = 0; songNum < player.songs.length; songNum++) {

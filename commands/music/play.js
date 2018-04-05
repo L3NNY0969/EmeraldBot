@@ -78,55 +78,53 @@ async function handleQueue(video, msg, bot, playlist = false) {
         requester: msg.author,
         author: bot.escapeMarkdown(video.channel.user)
     }
-    if(!bot.players[msg.guild.id]) bot.players[msg.guild.id] = bot.players[msg.guild.id] = {
-        songs: [],
-        volume: 2,
-        voiceChannel: msg.member.voiceChannel,
-        playing: false,
-        looping: false,
-        con: null
-    }
-    if(bot.players[msg.guild.id].playing) {
-        if(bot.players[msg.guild.id].songs.length === 45) return msg.channel.send(":x: You have reached the limit of 45 songs in the queue.");
-        bot.players[msg.guild.id].songs.push(song);
-        if(playlist === true) return; else return msg.channel.send(`A new song has been added to the queue by **${msg.author.tag}** (Pos: ${bot.players[msg.guild.id].songs.length-1}): **__${song.title}__** by **${song.author}** (${song.duration.days}${song.duration.hours}${song.duration.minutes}${song.duration.seconds})`)
+    if(global.players.get(msg.guild.id)) {
+        if(global.players.get(msg.guild.id).songs.length === 30) return msg.channel.send(":x: You have reached the limit of 30 songs in the queue.");
+        global.players.get(msg.guild.id).songs.push(song);
+        if(playlist === true) return; else return msg.channel.send(`A new song has been added to the queue by **${msg.author.tag}** (Pos: ${player.songs.length-1}): **__${song.title}__** by **${song.author}** (${song.duration.days}${song.duration.hours}${song.duration.minutes}${song.duration.seconds})`)
     } else {
-        bot.players[msg.guild.id].playing = true;
-        bot.players[msg.guild.id].songs.push(song);
+        global.players.set(msg.guild.id, {
+            songs: [],
+            volume: 2,
+            voiceChannel: msg.member.voiceChannel,
+            playing: false,
+            looping: false,
+            con: null
+        });
+        global.players.get(msg.guild.id).songs.push(song);
+        
         try {
-            bot.players[msg.guild.id].con = await msg.member.voiceChannel.join();
-            play(msg, bot);
+            global.players.get(msg.guild.id) = await msg.member.voiceChannel.join();
+            play(msg);
         } catch (e) {
             msg.channel.send(`\`\`\`js\n${e.stack}\`\`\``);
         }
     }
 }
 
-function play(msg, bot) {
-    const player = bot.players[msg.guild.id];
+function play(msg) {
+    const player = global.players.get(msg.guild.id);
     const dispatcher = player.con.playStream(ytdl(player.songs[0].url, {filter: "audioonly"}));
     dispatcher.setVolume(50/100);
     dispatcher.on("end", () => {
-        if(player.voiceChannel.members.filter(m=>!m.user.bot).size >= 1) {
-            if(player.looping) {
-                return play(msg, bot);
-            } else {
-                player.songs.shift();
-                if(player.songs.length === 0) {
-                    player.con.disconnect();
-                    return delete bot.players[msg.guild.id];
-                } else {
-                    setTimeout(() => play(msg, bot), 250);
-                }
-            }
-        } else {
+        if(!msg.member.voiceChannel) {
             player.songs = [];
-            player.con.disconnect();
-            return delete bot.players[msg.guild.id];
+            player.voiceChannel.leave();
+            return global.players.delete(msg.guild.id);
+        } else {}
+        if(player.looping) {
+            return play(msg);
+        } else {
+            player.songs.shift();
+            if(player.songs.length === 0) {
+                player.voiceChannel.leave();
+                return global.players.delete(msg.guild.id);
+            } else {
+                setTimeout(() => play(msg), 250);
+            }
         }
     });
-    if(player.looping) return msg.channel.send(`Now playing *(looped)* **${player.songs[0].title}** as requested by *${player.songs[0].requester.tag}*`);
-    else return msg.channel.send(`Now playing **${player.songs[0].title}** as requested by *${player.songs[0].requester.tag}*`);
+    return msg.channel.send(`Now playing${player.looping ? ' *on loop* ' : ' '}**${player.songs[0].title}** as requested by *${player.songs[0].requester.tag}*`);
 }
 
 module.exports.config = {

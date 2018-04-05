@@ -1,5 +1,5 @@
 module.exports.run = async (bot, msg, args) => {
-    let player = bot.players[msg.guild.id];
+    let player = global.players.get(msg.guild.id);
     if(!msg.member.voiceChannel) return msg.channel.send(":x: You must be in a voice channel first.");
     if(player && player.playing) {
         if(msg.member.voiceChannel.id != player.voiceChannel.id) return msg.channel.send(":x: You must be in the same voice channel as the bot.");

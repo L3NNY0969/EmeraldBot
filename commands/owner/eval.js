@@ -8,16 +8,27 @@ module.exports.run = async (bot, msg, args) => {
         try {
             let result = eval(toEval);
             if(typeof(result) != "string")
-                result = await require("util").inspect(result, true, 0);
-            let haste = await bot.haste(result);
-            m.edit(bot.embed({
-                title: "Evaluation success!",
-                fields: [
-                    {name: "Code:", value: `\`\`\`xl\n${toEval}\`\`\``},
-                    {name: "Result:", value: `${result.length === 1010 ? `\`${haste.raw.replace(bot.token, "Stop it thats my discord token!", bot.config.tokens.youtube, "Stop it thats my youtube token!")}\`` : `\`\`\`xl\n${result.replace(bot.token, "Stop it thats my discord token!").replace(bot.config.tokens.youtube, "Stop it thats my youtube token!")}\`\`\``}`}
-                ],
-                footer: `Evaluated by ${msg.author.username} in ${m.createdTimestamp - msg.createdTimestamp}ms`
-            }));
+                result = await require("util").inspect(result, {maxDepth: 0, showHidden: true});
+            if(result.length > 1024) {
+                let haste = await bot.haste(result);
+                m.edit(bot.embed({
+                    title: "Evaluation success!",
+                    fields: [
+                        {name: "Code:", value: `\`\`\`xl\n${toEval}\`\`\``},
+                        {name: "Result:", value: haste}
+                    ],
+                    footer: `Evaluated by ${msg.author.username} in ${m.createdTimestamp - msg.createdTimestamp}ms`
+                }));
+            } else {
+                m.edit(bot.embed({
+                    title: "Evaluation success!",
+                    fields: [
+                        {name: "Code:", value: `\`\`\`xl\n${toEval}\`\`\``},
+                        {name: "Result:", value: `\`\`\`js\n${result}\`\`\``}
+                    ],
+                    footer: `Evaluated by ${msg.author.username} in ${m.createdTimestamp - msg.createdTimestamp}ms`
+                }));
+            }
         } catch (error) {
             m.edit(bot.embed({
                 title: "Evaluation failed!",

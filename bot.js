@@ -4,17 +4,17 @@ const bot = new Discord.Client({
     disabledEvents: ['TYPING_START', 'TYPING_STOP', 'GUILD_SYNC', 'RELATIONSHIP_ADD', 'RELATIONSHIP_REMOVE', 'USER_SETTINGS_UPDATE', 'USER_NOTE_UPDATE'],
     reconnect: true
 });
+const snekfetch = require('snekfetch');
 const {readdir, readdirSync} = require('fs');
 
 //Needed
-bot.musicCooldowns = new Set();
 bot.commands = new Discord.Collection();
 bot.aliases = new Discord.Collection();
+global.players = new Discord.Collection();
 bot.db = require("sqlite");
 bot.db.open("./database.sqlite");
 bot.config = require('./config.json');
 bot.color = 0x55B88E;
-bot.players = {};
 bot.login(bot.config.tokens.discord);
 
 //Functions
@@ -43,12 +43,12 @@ bot.embed = function(options = {}) {
 
     return embed;
 }
-bot.haste = async function(text) {
-    const snekfetch = require("snekfetch");
-    await snekfetch.post("https://hastebin.com/documents/")
-    .then(result => {
-        if(!result.body.key) return "Failed to haste the text provided!";
-        else return {raw: `https://hastebin.com/raw/${result.body.key}`}
+bot.haste = function(text) {
+    return new Promise(async (res, rej) => {
+        if(!text) rej("Text needs to be provided!");
+        snekfetch.post("https://hastebin.com/documents").send(text).then(r => {
+            res(`https://hastebin.com/${r.body.key}`);
+        }).catch(e => rej(e));
     });
 }
 bot.escapeMarkdown = function(text) {
@@ -71,8 +71,9 @@ bot.on("guildMemberAdd", (member) => {
         if(config.welcome_channel === null) return;
         else {
             if(config.auto_role === null) {} else member.addRole(config.auto_role, "New user").catch(e => console.log(`[INFO] Failed to auto role ${member.user.username} in ${member.guild.name}(${member.guild.id}) reason: ${e.message}`));
-            if(!(member.guild.channels.get(config.welcome_channel) || c.permissionsFor(bot.user).has("SEND_MESSAGES"))) return; //What does it do if it cannot find the channel or the bot cannot send the message? We simply return
-            else member.guild.channels.get(config.welcome_channel).send(config.welcome_msg
+            let c = member.guild.channels.get(config.welcome_channel);
+            if(!(c || c.permissionsFor(bot.user).has("SEND_MESSAGES"))) return; //What does it do if it cannot find the channel or the bot cannot send the message? We simply return
+            else c.send(config.welcome_msg
                 .replace("e{user_mention}", member)
                 .replace("e{user_no_mention}", member.user.tag)
                 .replace("e{server_name}", member.guild.name)
@@ -223,7 +224,7 @@ function checkPermission(cmd, permission, success = () => {}, msg) {
 }
 
 process.on("SIGINT", () => {
-    console.log(`[INFO] Shutting down with ${bot.voiceConnections.size} voice connections, ${bot.guilds.size} servers and ${bot.users.size} users!`);
+    console.log(`[INFO] Shutting down with ${bot.players.size} players, ${bot.guilds.size} servers and ${bot.users.size} users!`);
     setTimeout(() => {
         bot.destroy();
         process.exit();
