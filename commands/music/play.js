@@ -1,6 +1,5 @@
 const {RichEmbed} = require("discord.js");
 const ytdl = require("ytdl-core");
-const request = require('request');
 
 module.exports.run = async (bot, msg, args) => {
     const YTApi = require("yt-api").Client;
@@ -35,8 +34,8 @@ module.exports.run = async (bot, msg, args) => {
         return;
     } else if(playlistMatch) {
         ytapi.getPlaylist(playlistMatch[2]).then(async pl => {
-            for(let i = 0; i < 25 && i < pl.playlistVideos.length; i++) await handleQueue(pl.playlistVideos[i], msg, bot, true);
             msg.channel.send(`:white_check_mark: Playlist **${pl.playlistTitle}** was added to the queue!`);
+            for(let i = 0; i < 25 && i < pl.playlistVideos.length; i++) await handleQueue(pl.playlistVideos[i], msg, bot, true);
         }).catch(() => msg.channel.send("Playlist not found!"));
         return;
     } else {
@@ -122,8 +121,8 @@ function play(msg, bot) {
             }
         } else {
             player.songs = [];
-            player.voiceChannel.leave();
-            return;
+            player.con.disconnect();
+            return delete bot.players[msg.guild.id];
         }
     });
     if(player.looping) return msg.channel.send(`Now playing *(looped)* **${player.songs[0].title}** as requested by *${player.songs[0].requester.tag}*`);

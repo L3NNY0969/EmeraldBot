@@ -1,6 +1,9 @@
 const { RichEmbed } = require("discord.js");
-module.exports = class Paginator {
+const { EventEmitter } = require("events");
+
+module.exports = class Paginator extends EventEmitter {
     constructor(msg, pages=[], title, color) {
+        super();
         this.msg = msg;
         this.rCollector = null;
         this.mCollector = null;
@@ -43,6 +46,7 @@ module.exports = class Paginator {
                 if(['⏪', '⏩', '🔢'].includes(reaction) && this.pages.length === 2) continue;
                 else await this.sentMsg.react(reaction);
             }
+            this.emit("sessionStart", this.msg);
         }
     }
 
@@ -98,6 +102,7 @@ module.exports = class Paginator {
         this.enabled = false;
         try {
             this.sentMsg.delete(1500).catch(O_o=>{});
+            this.emit("sessionEnd", this.msg);
         } catch (error) {}
     }
 }

@@ -37,7 +37,13 @@ module.exports.run = async (bot, msg, args) => {
         ];
         if(msg.author.id === "302604426781261824" || msg.author.id === "199436790581559296") pages.push({title: `Owner Commands ${owner.size === 0 ? "" : `(${general.size} total)`}`, description: owner.size === 0 ? "None" : owner.map(c => `\`${c.config.name}: ${c.config.description} ${c.config.aliases.length === 0 ? "" : `(Aliases: ${c.config.aliases.join(', ')})`} ${c.config.permission === "None" ? "" : `(Perm: ${c.config.permission})`}\``).join("\n")});
         let session = new paginator(msg, pages, `Emerald Bot Help`, bot.color);
-        session.start();
+        await session.start();
+        session.on("sessionStart", (m) => {
+            console.log(`[PAGINATOR] A paginator session has been started!`);
+        });
+        session.on("sessionEnd", (m) => {
+            console.log(`[PAGINATOR] A paginator session has been stopped!`);
+        });
     } else {
         let command = bot.commands.get(args[0]);
         if(!command) return msg.channel.send(":x: That command was not found.");

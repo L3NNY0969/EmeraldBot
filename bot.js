@@ -102,7 +102,7 @@ bot.on("guildMemberRemove", (member) => {
 bot.on("guildCreate", guild => {
     bot.channels.get("430263132896624651").send(`:slight_smile: I have joined \`${guild.name}\` I am now in \`${bot.guilds.size}\` servers!`);
     bot.user.setActivity(`with ${bot.guilds.size} emeralds! | e.help`);
-    bot.db.run("INSERT INTO configs (server, mod_log, mod_log_cases, welcome_channel, welcome_msg, leave_msg, prefix, anti_links, anti_swear, swear_words, auto_role) VALUES (?,?,?,?,?,?,?,?,?,?,?)", [guild.id, null, 0, null, "Hello **e{user_no_mention}** and welcome to **e{server_name}**. You're member #e{server_memcount}", "Farewell **e{user}** we hope you enjoyed you're stay at **e{server_name}**!", "e.", 30, "Disabled", "Disabled", "Word1,Word2", null]);
+    bot.db.run("INSERT INTO configs (server, mod_log, mod_log_cases, welcome_channel, welcome_msg, leave_msg, prefix, anti_links, anti_swear, swear_words, auto_role) VALUES (?,?,?,?,?,?,?,?,?,?,?)", [guild.id, null, 0, null, "Hello **e{user_no_mention}** and welcome to **e{server_name}**. You're member #e{server_memcount}", "Farewell **e{user}** we hope you enjoyed you're stay at **e{server_name}**!", "e.", "Disabled", "Disabled", "Word1,Word2", null]);
 });
 
 bot.on("guildDelete", guild => {
@@ -150,7 +150,7 @@ Invite: ${bot.invite}
 });
 
 bot.on("message", async msg => {
-    if(msg.isMentioned(bot.user)) {
+    if(msg.content.startsWith("<@427570319822290945> prefix")) {
         bot.db.get(`SELECT * FROM configs WHERE server = ${msg.guild.id}`).then(config => {
             if(!config) {
                 bot.db.run("INSERT INTO configs (server, mod_log, mod_log_cases, welcome_channel, welcome_msg, leave_msg, prefix, anti_links, anti_swear, swear_words, auto_role) VALUES (?,?,?,?,?,?,?,?,?,?,?)", [msg.guild.id, null, 0, null,"Hello **e{user_no_mention}** and welcome to **e{server_name}**. You're member #e{server_memcount}", "Farewell **e{user}** we hope you enjoyed you're stay at **e{server_name}**!", "e.", "Disabled", "Disabled", "Word1,Word2", null]);
@@ -221,3 +221,11 @@ function checkPermission(cmd, permission, success = () => {}, msg) {
         else return msg.channel.send(`:x: You cannot run this command as it requires the \`${cmd.config.permission}\` permission!`).then(m => m.delete(1500));
     }
 }
+
+process.on("SIGINT", () => {
+    console.log(`[INFO] Shutting down with ${bot.voiceConnections.size} voice connections, ${bot.guilds.size} servers and ${bot.users.size} users!`);
+    setTimeout(() => {
+        bot.destroy();
+        process.exit();
+    }, 250);
+});
