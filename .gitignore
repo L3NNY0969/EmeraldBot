@@ -1,6 +1,0 @@
-ffmpeg.exe
-node_modules
-config.json
-database.sqlite
-testing.js
-assets/*
