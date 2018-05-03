@@ -1,0 +1,7 @@
+# Configs
+config.json
+
+# Misc
+assets/*
+node_modules/*
+commandformat.js

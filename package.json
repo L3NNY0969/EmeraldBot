@@ -1,0 +1,30 @@
+{
+  "name": "emeraldbot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IceeMC/EmeraldBot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IceeMC/EmeraldBot/issues"
+  },
+  "homepage": "https://github.com/IceeMC/EmeraldBot#readme",
+  "dependencies": {
+    "canvas": "^1.6.10",
+    "canvas-constructor": "^1.0.1",
+    "chalk": "^2.4.1",
+    "cheerio": "^1.0.0-rc.2",
+    "discord.js": "^11.3.2",
+    "discord.js-lavalink": "^2.0.2",
+    "mongodb": "^3.0.7",
+    "sqlite": "^2.9.1",
+    "superagent": "^3.8.2"
+  }
+}
