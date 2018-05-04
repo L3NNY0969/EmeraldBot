@@ -1,5 +1,5 @@
 module.exports.run = async (bot, msg, args) => {
-    let player = global.players.get(msg.guild.id);
+    let player = bot.players.get(msg.guild.id);
     let llplayer = bot.player.get(msg.guild.id);
     if(llplayer) {
         if(msg.channel.permissionsFor(bot.user).has(["EMBED_LINKS", "SEND_MESSAGES"])) {
@@ -8,6 +8,7 @@ module.exports.run = async (bot, msg, args) => {
             let lastSliced = 0;
             for(let i = 0; i < player.songs.length; i += 8) {
                 const sliced = player.songs.slice(i+1, i + 8);
+                if(sliced.length === 0) return msg.channel.send(":x: The queue is empty.");
                 queuePages.push({
                     title: `Displaying songs from \`${i + 1}\` to \`${i + sliced.length}\``,
                     description: sliced.map(s => `\`•\` **[${s.title}](${s.url})**`).join("\n")

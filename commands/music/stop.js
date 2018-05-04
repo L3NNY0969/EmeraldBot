@@ -1,5 +1,5 @@
 module.exports.run = async (bot, msg, args) => {
-    let player = global.players.get(msg.guild.id);
+    let player = bot.players.get(msg.guild.id);
     let llplayer = bot.player.get(msg.guild.id);
     if(!msg.member.voiceChannel) return msg.channel.send(":x: You must be in a voice channel first.");
     if(llplayer) {
@@ -9,7 +9,7 @@ module.exports.run = async (bot, msg, args) => {
             player.songs = [];
             bot.player.leave(msg.guild.id);
             msg.channel.send(":white_check_mark: The player has been stopped and the queue has been cleared.");
-            return global.players.delete(msg.guild.id);
+            return bot.players.delete(msg.guild.id);
         }
     } else msg.channel.send(":x: Nothing is playing to stop!");
 }

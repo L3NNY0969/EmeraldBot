@@ -1,5 +1,5 @@
 module.exports.run = async (bot, msg, args) => {
-    let player = global.players.get(msg.guild.id);
+    let player = bot.players.get(msg.guild.id);
     let llplayer = bot.player.get(msg.guild.id);
     if(llplayer) {
         if(msg.author.id != player.songs[0].requester.id && !msg.member.hasPermission("ADMINISTRATOR")) return msg.channel.send(":x: You must be the person who requested this song or have the administrator permission!");

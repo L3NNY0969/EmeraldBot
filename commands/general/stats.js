@@ -7,7 +7,8 @@ module.exports.run = async (bot, msg, args) => {
             icon: bot.user.avatarURL
         },
         fields: [            
-            { name: "Music players:", value: global.players.size, inline: true },
+            { name: "Music players:", value: bot.players.size, inline: true },
+            { name: "Tic Tac Toe games: ", value: bot.ttt.size, inline: true },
             { name: "Servers:", value: bot.guilds.size, inline: true },
             { name: "Users:", value: bot.users.size, inline: true },
             { name: "Commands:", value: bot.commands.size, inline: true },
@@ -83,9 +84,9 @@ function handleUptime() {
 
     if(minutes > 0) {
         if(minutes > 1) {
-            uptime += `${minutes} minutes, `
+            uptime += `${minutes} minutes, and `
         } else {
-            uptime += `${minutes} minute, `
+            uptime += `${minutes} minute, and `
         }
     } else uptime += "";
 

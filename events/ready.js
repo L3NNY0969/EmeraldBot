@@ -5,8 +5,12 @@ const { Collection, RichEmbed } = require("discord.js");
 const { post } = require("superagent");
 
 module.exports = async (bot) => {
-    bot.commands = new Collection();
-    bot.aliases = new Collection();
+
+    bot.ttt = new Map();
+    bot.players = new Map();
+    bot.commands = new Map();
+    bot.aliases = new Map();
+
     bot.color = 0x55B88E;
     bot.invite = await bot.generateInvite(["ADMINISTRATOR"]);
 
@@ -30,7 +34,7 @@ module.exports = async (bot) => {
 [INFO] Connected with ${bot.guilds.size} emeralds and ${bot.users.size} users
 [INFO] Invite link: ${bot.invite}
 `.trim());
-    bot.user.setActivity(`e.help`);
+    bot.user.setActivity(`with ${bot.guilds.size} emeralds | e.help`);
     bot.player = new PlayerManager(bot, bot.config.nodes, {
         user: bot.user.id,
         shards: 1

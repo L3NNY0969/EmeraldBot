@@ -82,11 +82,11 @@ async function handleQueue(video, msg, bot, playlist = false) {
         requester: msg.author
     }
 
-    if(global.players.get(msg.guild.id)) {
-        global.players.get(msg.guild.id).songs.push(song);
-        if(playlist === true) return; else return msg.channel.send(`A new song has been added to the queue by **${msg.author.tag}** (Position: ${global.players.get(msg.guild.id).songs.length-1}): **__${song.title}__** by **${song.author}**`)
+    if(bot.players.get(msg.guild.id)) {
+        bot.players.get(msg.guild.id).songs.push(song);
+        if(playlist === true) return; else return msg.channel.send(`A new song has been added to the queue by **${msg.author.tag}** (Position: ${bot.players.get(msg.guild.id).songs.length-1}): **__${song.title}__** by **${song.author}**`)
     } else {
-        global.players.set(msg.guild.id, {
+        bot.players.set(msg.guild.id, {
             songs: [],
             volume: 2,
             voiceChannel: msg.member.voiceChannel,
@@ -95,11 +95,11 @@ async function handleQueue(video, msg, bot, playlist = false) {
             con: null
         });
 
-        global.players.get(msg.guild.id).playing = true;
-        global.players.get(msg.guild.id).songs.push(song);
+        bot.players.get(msg.guild.id).playing = true;
+        bot.players.get(msg.guild.id).songs.push(song);
 
         try {
-            global.players.get(msg.guild.id).con = await bot.player.join({
+            bot.players.get(msg.guild.id).con = await bot.player.join({
                 guild: msg.guild.id,
                 channel: msg.member.voiceChannel.id,
                 host: "localhost"
@@ -112,7 +112,7 @@ async function handleQueue(video, msg, bot, playlist = false) {
 }
 
 async function play(msg, bot) {
-    const player = global.players.get(msg.guild.id);
+    const player = bot.players.get(msg.guild.id);
     let llplayer = bot.player.get(msg.guild.id);
     llplayer.volume(50);
     await llplayer.play(player.songs[0].track);
@@ -128,7 +128,7 @@ async function play(msg, bot) {
                 player.songs.shift();
                 if(player.songs.length === 0) {
                     await bot.player.leave(msg.guild.id);
-                    return global.players.delete(msg.guild.id);
+                    return bot.players.delete(msg.guild.id);
                 } else {
                     setTimeout(async () => {
                         await llplayer.play(player.songs[0].track);
