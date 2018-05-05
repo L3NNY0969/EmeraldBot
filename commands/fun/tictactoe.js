@@ -13,14 +13,14 @@ start: Starts the Tic Tac Toe game.\``);
         case "new": {
             if(!bot.ttt.get(msg.channel.id)) {
                 bot.ttt.set(msg.channel.id, new TicTacToeGame(msg, bot.ttt));
-                bot.ttt.get(msg.channel.id).addPlayer(msg.author);
+                bot.ttt.get(msg.channel.id).addPlayer(msg.author, msg.prefix);
             } else return msg.channel.send(`:x: A game is already running here.`);
             break;
         }
         case "join": {
             if(bot.ttt.get(msg.channel.id)) {
                 if(bot.ttt.get(msg.channel.id).host.id === msg.author.id) return msg.channel.send(":x: You cannot play with your self.");
-                bot.ttt.get(msg.channel.id).addPlayer(msg.author);
+                bot.ttt.get(msg.channel.id).addPlayer(msg.author, msg.prefix);
             } else return msg.channel.send(`:x: A game is already running here.`);
             break;
         }
@@ -34,11 +34,11 @@ start: Starts the Tic Tac Toe game.\``);
         case "start": {
             if(bot.ttt.get(msg.channel.id)) {
                 if(bot.ttt.get(msg.channel.id).host.id === msg.author.id) {
-                    if(bot.ttt.get(msg.channel.id).players.size === 2) {
+                    if(bot.ttt.get(msg.channel.id).players.size > 1) {
                         bot.ttt.get(msg.channel.id).start();
                     } else return msg.channel.send(":x: This game needs one more player.");
-                } else return msg.channel.send(":x: There is no game currently running.");
-            }
+                } else return msg.channel.send(":x: Only the host can start the game.");
+            } else return msg.channel.send(`:x: A game is already running here.`);
             break;
         }
         default: {

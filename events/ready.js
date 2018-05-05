@@ -6,10 +6,11 @@ const { post } = require("superagent");
 
 module.exports = async (bot) => {
 
-    bot.ttt = new Map();
-    bot.players = new Map();
-    bot.commands = new Map();
-    bot.aliases = new Map();
+    bot.ttt = new Collection();
+    bot.players = new Collection();
+
+    bot.commands = new Collection();
+    bot.aliases = new Collection();
 
     bot.color = 0x55B88E;
     bot.invite = await bot.generateInvite(["ADMINISTRATOR"]);

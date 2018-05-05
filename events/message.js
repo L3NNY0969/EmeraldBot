@@ -1,20 +1,45 @@
 module.exports = async (bot, msg) => {
+    if(!msg.guild || msg.author.bot) return;
     bot.db.collection("configs").find({ _id: msg.guild.id }).toArray(async (err, config) => {
         config = config[0];
         if(!config) {
             config = await bot.db.collection("configs").insertOne({ _id: msg.guild.id, mod_log: null, mod_log_cases: 0, welcome_channel: null, leave_msg: "Farewell **e{user}** we hope you enjoyed you're stay at **e{server_name}**!", prefix: "e.", anti_links: false, anti_swear: false, swear_words: ["SwearWord1", "SwearWord2"], auto_role: null });
+            check(msg, config);
             msg.prefix = config.prefix;
             return processCommand(bot, msg);
         } else {
+            check(msg, config);
             msg.prefix = config.prefix;
             return processCommand(bot, msg);
         }
     });
 }
 
+function check(msg, config) {
+    //Swearing check
+    if(config.anti_swear && !msg.member.permissions.has("ADMINISTRATOR") && msg.author.id != msg.guild.owner.id) {
+        config.swear_words.forEach(word => {
+            if(msg.content.match(new RegExp(word, "gi"))) {
+                msg.delete().catch(O_o=>{});
+                msg.reply("Swearing is not allowed here :rage:!").then(m=>m.delete(3500));
+            }
+        });
+    } else {};
+    
+    //Anti links check
+    if(config.anti_links && !msg.member.permissions.has("ADMINISTRATOR") && msg.author.id != msg.guild.owner.id) {
+        //Thanks Godson™#4036 for this RegEx.
+        const urlMatch = /^(?:(http[s]?|ftp[s]):\/\/)?([^:\/\s]+)(:[0-9]+)?((?:\/\w+)*\/)([\w\-\.]+[^#?\s]+)([^#\s]*)?(#[\w\-]+)?$/gi.exec(msg.content);
+        if(urlMatch) {
+            msg.delete().catch(O_o=>{});
+            msg.reply("Posting links is not allowed here :rage:!").then(m=>m.delete(3500));
+        }
+    } else {};
+}
+
 function processCommand(bot, msg) {
     if(!msg.content.toLowerCase().startsWith(msg.prefix.toLowerCase())) return;
-    let split = msg.content.split(/\s+/g);
+    let split = msg.content.toLowerCase().split(/\s+/g);
     let args = split.slice(1);
     let c = bot.commands.get(split[0].slice(msg.prefix.length)) || bot.aliases.get(split[0].slice(msg.prefix.length));
     if(c) {

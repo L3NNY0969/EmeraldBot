@@ -26,7 +26,7 @@ module.exports.run = async (bot, msg, args) => {
             handleQueue(v[0], msg, bot);
             msg.channel.stopTyping();
         });
-    } else if(args[0].match(/(\?|\&)list=(.*)/)) {
+    } else if(args[0].match(/\?|\&list=(.*)/)) {
         getVideos(args[0]).then(async v => {
             msg.channel.startTyping();
             let songs = await getVideos(search).catch(() => {

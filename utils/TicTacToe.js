@@ -35,11 +35,11 @@ module.exports = class TicTacToe {
 	    this.fillSlot(this.board[parseInt(res.first().content) - 1], player);
     }
 
-    addPlayer(user) {
+    addPlayer(user, prefix) {
         if(this.started) return this.msg.channel.send(":x: **This game is already in-progress**.");
         if(!this.players.get(user.id)) {
             this.players.set(user.id, user);
-            this.msg.channel.send(`${user}, **Has joined the game. ${this.players.size === 2 ? `\n${this.host}, You can start the game now. \`i.ttt start\`**` : "**"}`);
+            this.msg.channel.send(`${user}, **Has joined the game. ${this.players.size === 2 ? `\n${this.host}, You can start the game now. \`${prefix}ttt start\`**` : "**"}`);
         } else {
             this.msg.channel.send(":x: **You are already in this game!**");
         }
@@ -137,15 +137,15 @@ module.exports = class TicTacToe {
     
             let newBoard = new Canvas(500, 500)
                 .addImage(tic_tac_toe_board, 0, 0, 500, 500)
-                .addImage(this.board[0].taken ? user1 : blankSlot, 0, 0, 163, 163)
-                .addImage(this.board[1].taken ? user2 : blankSlot, 169, 0, 163, 163)
-                .addImage(this.board[2].taken ? user3 : blankSlot, 169*2, 0, 163, 163)
-                .addImage(this.board[3].taken ? user4 : blankSlot, 0, 169, 163, 163)
-                .addImage(this.board[4].taken ? user5 : blankSlot, 169, 169, 163, 163)
-                .addImage(this.board[5].taken ? user6 : blankSlot, 169*2, 169, 163, 163)
-                .addImage(this.board[6].taken ? user7 : blankSlot, 0, 169*2, 163, 163)
-                .addImage(this.board[7].taken ? user8 : blankSlot, 169, 169*2, 163, 163)
-                .addImage(this.board[8].taken ? user9 : blankSlot, 169*2, 169*2, 163, 163);
+                .addImage(this.board[0].taken ? user1 : blankSlot, 0, 0, 162, 162)
+                .addImage(this.board[1].taken ? user2 : blankSlot, 169, 0, 162, 162)
+                .addImage(this.board[2].taken ? user3 : blankSlot, 169*2, 0, 162, 162)
+                .addImage(this.board[3].taken ? user4 : blankSlot, 0, 169, 162, 162)
+                .addImage(this.board[4].taken ? user5 : blankSlot, 169, 169, 162, 162)
+                .addImage(this.board[5].taken ? user6 : blankSlot, 169*2, 169, 162, 162)
+                .addImage(this.board[6].taken ? user7 : blankSlot, 0, 169*2, 162, 162)
+                .addImage(this.board[7].taken ? user8 : blankSlot, 169, 169*2, 162, 162)
+                .addImage(this.board[8].taken ? user9 : blankSlot, 169*2, 169*2, 162, 162);
             const board = await newBoard.toBufferAsync();
             await this.msg.channel.send({ file: { attachment: board } });
             this.msg.channel.stopTyping(true);

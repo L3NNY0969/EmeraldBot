@@ -2,7 +2,7 @@ const { RichEmbed } = require("discord.js");
 const { EventEmitter } = require("events");
 
 module.exports = class Paginator {
-    constructor(msg, pages=[], title, color) {
+    constructor(msg, pages=[], title, color, reactionsDisabled = false) {
         this.msg = msg;
         this.rCollector = null;
         this.mCollector = null;
@@ -14,11 +14,13 @@ module.exports = class Paginator {
         this.pageTitle = title;
         this.enabled = false;
         this.usingCustom = false;
+        this.reactionsDisabled = reactionsDisabled;
         this.emotes = ["440624348915695640", "440624439495884800", "440624504373510155", "440624789099642891", "440625003134844938"];
     }
 
     async start() {
         if(!this.enabled) await this.switchPage(0);
+        if(this.reactionsDisabled) return;
         this.rCollector = this.sentMsg.createReactionCollector((reaction, user) => {
             if(this.usingCustom) {
                 [
@@ -73,6 +75,7 @@ module.exports = class Paginator {
         } else {
             this.enabled = true;
             this.sentMsg = await this.msg.channel.send(new RichEmbed().setTitle(this.pageTitle === null ? null : this.pageTitle).setColor(this.pageColor).setFooter(`Showing page ${this.currentPage+1} of ${this.pages.length}.`).addField(this.pages[0].title, this.pages[0].description, false));
+            if(this.reactionsDisabled) return;
             for(var reaction of this.emotes) {
                 try {
                     this.usingCustom = true;

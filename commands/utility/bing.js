@@ -23,8 +23,8 @@ module.exports.run = async (bot, msg, args) => {
                 let fields = [];
                 for(let i = 0; i < 5; i++) {
                     fields.push({
-                        name: results[i].title,
-                        value: results[i].description
+                        name: results[i].title ? results[i].title : "No Title Specified",
+                        value: results[i].description ? results[i].description : "No Description Specified."
                     });
                 }
                 msg.channel.send(bot.embed({
