@@ -1,17 +1,18 @@
 module.exports.run = async (bot, msg, args) => {
-    if(!args[0]) return msg.channel.send(`:x: Invalid usage | \`${msg.prefix}ban (mention | user_id)\``);
-    if(msg.channel.permissionsFor(bot.user).has("EMBED_LINKS") && msg.channel.permissionsFor(bot.user).has("BAN_MEMBERS")) {
-        let user = msg.guild.member(msg.mentions.users.first()) || msg.guild.member(args[0]);
-        if(!user) return msg.channel.send(":x: The provided user was not found on this server.");
-        else {
-            if(user.user.equals(bot.user)) {
+    if (!args[0]) return msg.channel.send(`:x: Invalid usage | \`${msg.prefix}ban (mention | user_id)\``);
+    if (msg.channel.permissionsFor(bot.user).has("EMBED_LINKS") && msg.channel.permissionsFor(bot.user).has("BAN_MEMBERS")) {
+        const user = msg.guild.member(msg.mentions.users.first()) || msg.guild.member(args[0]);
+        if (!user) {
+            return msg.channel.send(":x: The provided user was not found on this server.");
+        } else {
+            if (user.user.equals(bot.user)) {
                 return msg.channel.send(bot.embed({
                     title: ":white_check_mark: User not Banned!",
                     description: `You cannot ban the Emerald.`,
                     footer: `Not banned by ${msg.author.tag}`,
                     timestamp: true
                 }));
-            } else if(user.user.equals(msg.author)) {
+            } else if (user.user.equals(msg.author)) {
                 return msg.channel.send(bot.embed({
                     title: ":white_check_mark: User not Banned!",
                     description: `You cannot ban your self.`,
@@ -19,8 +20,8 @@ module.exports.run = async (bot, msg, args) => {
                     timestamp: true
                 }));
             }
-            let reason = args.join(" ").slice(args[0].length+1);
-            if(!reason) return msg.channel.send("Please provide a reason why you are banning this user.");
+            const reason = args.join(" ").slice(args[0].length + 1);
+            if (!reason) return msg.channel.send("Please provide a reason why you are banning this user.");
             user.ban(`Banned by ${msg.author.tag} for ${reason}`).then(() => {
                 msg.channel.send(bot.embed({
                     title: ":white_check_mark: User Banned!",
@@ -32,8 +33,10 @@ module.exports.run = async (bot, msg, args) => {
                 msg.channel.send(":x: This user cannot be banned.");
             });
         }
-    } else return msg.channel.send(":x: I am missing the `Ban Members` or the `Embed Links` permission. Please give me both permissions and try again!");
-}
+    } else {
+        return msg.channel.send(":x: I am missing the `Ban Members` or the `Embed Links` permission. Please give me both permissions and try again!");
+    }
+};
 
 module.exports.config = {
     name: "ban",
@@ -42,4 +45,4 @@ module.exports.config = {
     permission: "Ban Members",
     category: "Moderation",
     aliases: []
-}
+};

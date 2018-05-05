@@ -1,6 +1,6 @@
-module.exports.run = async (bot, msg, args) => {
+module.exports.run = async (bot, msg) => {
     msg.channel.send(`You can join my support server using the link down below\n<https://discord.gg/7TWjKTa>`);
-}
+};
 
 module.exports.config = {
     name: "support",
@@ -9,4 +9,4 @@ module.exports.config = {
     permission: "None",
     category: "General",
     aliases: ["server"]
-}
+};

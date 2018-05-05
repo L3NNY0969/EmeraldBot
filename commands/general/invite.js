@@ -1,6 +1,6 @@
-module.exports.run = async (bot, msg, args) => {
+module.exports.run = async (bot, msg) => {
     msg.channel.send(`Here is my invite link:\n<${bot.invite}>`);
-}
+};
 
 module.exports.config = {
     name: "invite",
@@ -9,4 +9,4 @@ module.exports.config = {
     permission: "None",
     category: "General",
     aliases: ["inv"]
-}
+};

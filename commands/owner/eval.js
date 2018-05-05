@@ -1,21 +1,17 @@
-const superagent = require('superagent');
-
 module.exports.run = async (bot, msg, args) => {
-    let toEval = args.join(" ");
-    if(!toEval) return msg.channel.send(":x: You must provide code to evaluate!");
-    else {
-        let m = await msg.channel.send(`Evaluating \`${toEval}\``);
+    const toEval = args.join(" ");
+    if (!toEval) { return msg.channel.send(":x: You must provide code to evaluate!"); } else {
+        const m = await msg.channel.send(`Evaluating \`${toEval}\``);
         try {
             let result = eval(toEval);
-            if(typeof(result) != "string")
-                result = await require("util").inspect(result, {maxDepth: 0, showHidden: true});
-            if(result.length > 1024) {
-                let haste = await bot.haste(result.replace(new RegExp(bot.token, 'g'), 'BAD BOI'));
+            if (typeof result !== "string") { result = await require("util").inspect(result, { maxDepth: 0, showHidden: true }); }
+            if (result.length > 1024) {
+                const haste = await bot.haste(result.replace(new RegExp(bot.token, "g"), "BAD BOI"));
                 m.edit(bot.embed({
                     title: "Evaluation success!",
                     fields: [
-                        {name: "Code:", value: `\`\`\`xl\n${toEval}\`\`\``},
-                        {name: "Result:", value: haste}
+                        { name: "Code:", value: `\`\`\`xl\n${toEval}\`\`\`` },
+                        { name: "Result:", value: haste }
                     ],
                     footer: `Evaluated by ${msg.author.username} in ${m.createdTimestamp - msg.createdTimestamp}ms`
                 }));
@@ -23,8 +19,8 @@ module.exports.run = async (bot, msg, args) => {
                 m.edit(bot.embed({
                     title: "Evaluation success!",
                     fields: [
-                        {name: "Code:", value: `\`\`\`xl\n${toEval}\`\`\``},
-                        {name: "Result:", value: `\`\`\`js\n${result.replace(new RegExp(bot.token, 'g'), 'BAD BOI')}\`\`\``}
+                        { name: "Code:", value: `\`\`\`xl\n${toEval}\`\`\`` },
+                        { name: "Result:", value: `\`\`\`js\n${result.replace(new RegExp(bot.token, "g"), "BAD BOI")}\`\`\`` }
                     ],
                     footer: `Evaluated by ${msg.author.username} in ${m.createdTimestamp - msg.createdTimestamp}ms`
                 }));
@@ -33,15 +29,15 @@ module.exports.run = async (bot, msg, args) => {
             m.edit(bot.embed({
                 title: "Evaluation failed!",
                 fields: [
-                    {name: "Code:", value: `\`\`\`xl\n${toEval}\`\`\``},
-                    {name: "Error:", value: `\`\`\`xl\n${error}\`\`\``}
+                    { name: "Code:", value: `\`\`\`xl\n${toEval}\`\`\`` },
+                    { name: "Error:", value: `\`\`\`xl\n${error}\`\`\`` }
                 ],
                 color: 0xff0000,
                 footer: `Evaluated by ${msg.author.username} in ${m.createdTimestamp - msg.createdTimestamp}ms`
             }));
         }
     }
-}
+};
 
 module.exports.config = {
     name: "eval",
@@ -50,4 +46,4 @@ module.exports.config = {
     permission: "Bot Owner",
     category: "Owner",
     aliases: ["ev"]
-}
+};

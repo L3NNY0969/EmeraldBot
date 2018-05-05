@@ -1,9 +1,10 @@
 module.exports.run = async (bot, msg, args) => {
-    if(!(parseInt(args[0]) || parseInt(args[1]))) return msg.channel.send(`:x: Invalid usage | ${msg.prefix}multiply [number1] [number2]`);
-    else {
-        msg.channel.send(`\`${args[0]}\` times \`${args[1]}\` is **${Math.floor(parseInt(args[0])*parseInt(args[1]))}**`);
+    if (!(parseInt(args[0]) || parseInt(args[1]))) {
+        return msg.channel.send(`:x: Invalid usage | ${msg.prefix}multiply [number1] [number2]`);
+    } else {
+        msg.channel.send(`\`${args[0]}\` times \`${args[1]}\` is **${Math.floor(parseInt(args[0]) * parseInt(args[1]))}**`);
     }
-}
+};
 
 module.exports.config = {
     name: "multiply",
@@ -12,4 +13,4 @@ module.exports.config = {
     permission: "None",
     category: "Math",
     aliases: []
-}
+};

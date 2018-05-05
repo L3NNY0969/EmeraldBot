@@ -1,3 +1,3 @@
 module.exports = (bot, error) => {
-    console.log(`[ERROR] ${error.message}`)
-}
+    console.log(`[ERROR] ${error.message}`);
+};
