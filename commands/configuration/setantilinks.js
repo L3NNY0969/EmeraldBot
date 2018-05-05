@@ -15,11 +15,11 @@ module.exports.run = async (bot, msg, args) => {
     } else if(args[0] === "off") {
         await bot.db.collection("configs").updateOne({ _id: msg.guild.id }, { $set: { anti_links: false } });
         msg.channel.send(bot.embed({
-            title: ":x: Anti links updated!",
+            title: ":white_check_mark: Anti links updated!",
             description: "Anti links has been turned off."
         }));
     } else return msg.channel.send(bot.embed({
-        title: ":x: Args Error",
+        title: ":white_check_mark: Args Error",
         description: "Please enter a valid option on or off.",
         color: 0xff0000
     }));
