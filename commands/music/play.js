@@ -1,4 +1,5 @@
 const { RichEmbed } = require("discord.js");
+const { get } = require("snekfetch");
 
 module.exports.run = async (bot, msg, args) => {
     const search = args.join(" ");
@@ -12,52 +13,65 @@ module.exports.run = async (bot, msg, args) => {
     if (!textPerms.has(["SEND_MESSAGES", "EMBED_LINKS"])) return;
     if (!voicePerms.has(["CONNECT", "SPEAK"])) return;
 
-    if (args[0].match(/https:\/\/?(www\.)?youtube\.com\/watch\?v=?(.*)/)) {
-        return getVideos(args[0]).then(v => {
+    if (search.match(/https:\/\/?(www\.)?youtube\.com\/watch\?v=(.*)/)) {
+        return getVideos(search).then(v => {
             msg.channel.startTyping();
             handleQueue(v[0], msg, bot);
             msg.channel.stopTyping();
+        }).catch(() => {
+            msg.channel.stopTyping(true);
+            return msg.channel.send(":x: No results where found.");
         });
-    } else if (args[0].match(/https:\/\/?(www\.)?youtu\.be\/?(.*)/)) {
-        return getVideos(args[0]).then(v => {
+    } else if (search.match(/https:\/\/?(www\.)?youtu\.be\/(.*)/)) {
+        return getVideos(search).then(v => {
             msg.channel.startTyping();
             handleQueue(v[0], msg, bot);
             msg.channel.stopTyping();
+        }).catch(() => {
+            msg.channel.stopTyping(true);
+            return msg.channel.send(":x: No results where found.");
         });
-    } else if (args[0].match(/\?|&list=(.*)/)) {
+    } else if (search.match(/(\?|\&)list=(.*)/)) { // eslint-disable-line
         msg.channel.startTyping();
-        const v = await getVideos(args[0]);
-        if (!v) return msg.channel.send(":x: No playlist found.");
-        for (let i = 0; i < 50; i++) {
-            handleQueue(v[i], msg, bot, true);
-        }
-        msg.channel.stopTyping();
-        return msg.channel.send(":white_check_mark: Playlist has been added.");
+        return getVideos(search).then(v => {
+            for (let i = 0; i < v.length; i++) {
+                handleQueue(v[i], msg, bot, true);
+            }
+            msg.channel.stopTyping(true);
+            msg.channel.send(`:white_check_mark: Playlist has been added with **${v.length}** songs.`);
+        }).catch(() => {
+            msg.channel.stopTyping(true);
+            return msg.channel.send(":x: No results where found.");
+        });
     } else {
-        let m;
-        try {
-            msg.channel.startTyping();
-            const videos = await getVideos(`ytsearch:${search}`)
-                .catch(() => msg.channel.send(`:x: No results found for: **${search}**`));
-            msg.channel.stopTyping();
-            let num = 0;
-            m = await msg.channel.send(new RichEmbed()
-                .setAuthor("Song Selection:", bot.user.avatarURL)
-                .setDescription(`${videos.map(video => `**${++num}**: [${video.info.title}](${video.info.uri})`).slice(0, 5).join("\n")}\n\nPlease pick a number between 1 and 5 you can also type \`cancel\`.`)
-                .setColor(bot.color)
-            );
-            const col = await msg.channel.awaitMessages(m1 => m1.content > 0 && m1.content < videos.length + 1 && m1.author.id === msg.author.id && m1.channel.id === msg.channel.id, { maxMatches: 1, time: 10000, errors: ["time"] });
-            if (col.first().content.match(/cancel/)) {
+        msg.channel.startTyping();
+        const videos = await getVideos(`ytsearch:${search}`).catch(e => msg.channel.send(`\`\`\`xl\n${e.stack}\`\`\``));
+        msg.channel.stopTyping();
+        let num = 0;
+        const m = await msg.channel.send(new RichEmbed()
+            .setAuthor("Song Selection:", bot.user.avatarURL)
+            .setDescription(`${videos.map(video => `**${++num}**: [${video.info.title}](${video.info.uri})`).slice(0, 5).join("\n")}\n\nPlease pick a number between 1 and 5 you can also type \`cancel\`. This times out in 15 seconds.`)
+            .setColor(bot.color)
+        );
+        const col = await msg.channel.createMessageCollector(m1 => m1.author.id === msg.author.id && m1.channel.id === msg.channel.id, { time: 15000 });
+        col.on("collect", collected => {
+            if (collected.content.match(/cancel/)) {
+                col.stop();
                 m.delete();
                 return msg.channel.send(":white_check_mark: The song selection has been stopped.").then(m2 => m2.delete(3500));
-            } else {
-                const toAdd = videos[parseInt(col.first().content) - 1];
+            } else if (collected.content > 0 && collected.content < videos.length + 1) {
+                col.stop();
+                const toAdd = videos[parseInt(collected.content) - 1];
                 m.delete();
-                handleQueue(toAdd, msg, bot);
+                return handleQueue(toAdd, msg, bot);
             }
-        } catch (e) {
-            msg.reply("The song selection was stopped since no value was entered.");
-        }
+        });
+        col.on("end", collected => {
+            if (collected.size < 1) {
+                m.delete();
+                return msg.reply("Since no value was entered the selection has been stopped.");
+            }
+        });
     }
 };
 
@@ -139,12 +153,14 @@ module.exports.config = {
     aliases: ["p"]
 };
 
-async function getVideos(query) {
-    return new Promise(async (res, rej) => {
-        const superagent = require("superagent");
-        const { body } = await superagent.get(`http://localhost:2333/loadtracks?identifier=${encodeURIComponent(query)}`)
-            .set("Authorization", "PartyBot");
-        if (!body[0]) return rej("NO_RESULTS_FOUND");
-        res(body);
-    });
+async function getVideos(search) {
+    const res = await get(`http://localhost:2333/loadtracks?identifier=${search}`)
+        .set("Authorization", "PartyBot")
+        .catch(err => {
+            console.error(err);
+            return null;
+        });
+    if (!res) throw "There was an error, try again";
+    if (!res.body.length) throw "No tracks found";
+    return res.body;
 }

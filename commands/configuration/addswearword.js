@@ -10,7 +10,8 @@ module.exports.run = async (bot, msg, args) => {
     }
     msg.delete().catch(() => {});
     bot.db.collection("configs").find({ _id: msg.guild.id }).toArray(async (error, config) => {
-        await bot.db.collection("configs").updateOne({ _id: msg.guild.id }, { $set: { swear_words: config[0].swear_words.push(args[0]) } });
+        config[0].swear_words.push(args[0]);
+        await bot.db.collection("configs").updateOne({ _id: msg.guild.id }, { $set: { swear_words: config[0].swear_words } });
         msg.channel.send(":white_check_mark: Swear word added.");
     });
 };

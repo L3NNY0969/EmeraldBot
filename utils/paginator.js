@@ -59,22 +59,21 @@ module.exports = class Paginator {
             this.enabled = true;
             this.sentMsg = await this.msg.channel.send(new RichEmbed().setTitle(this.pageTitle === null ? null : this.pageTitle).setColor(this.pageColor).setFooter(`Showing page ${this.currentPage + 1} of ${this.pages.length}.`).addField(this.pages[0].title, this.pages[0].description, false));
             if (this.reactionsDisabled) return;
-            for (const reaction of this.emotes) {
+            this.emotes.forEach(async e => {
                 try {
                     this.usingCustom = true;
-                    if (["440624348915695640", "440625003134844938"].includes(reaction) && this.pages.length <= 2) continue;
-                    else await this.sentMsg.react(reaction).catch(() => {});
+                    if (["440624348915695640", "440625003134844938"].includes(e) && this.pages.length < 2) {} else {
+                        await this.sentMsg.react(e).catch(() => {});
+                    }
                 } catch (error) {
                     this.usingCustom = false;
-                    if (["⏪", "⏩", "🔢"].includes(reaction) && this.pages.length <= 2) {
-                        continue;
-                    } else {
+                    if (["⏪", "⏩", "🔢"].includes(e) && this.pages.length < 2) {} else {
                         for (const r of ["⏪", "⬅", "⏸", "➡", "⏩", "🔢"]) {
                             await this.sentMsg.react(r).catch(() => {});
                         }
                     }
                 }
-            }
+            });
         }
     }
 

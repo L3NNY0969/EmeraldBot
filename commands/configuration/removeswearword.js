@@ -11,7 +11,8 @@ module.exports.run = async (bot, msg, args) => {
     msg.delete().catch(() => {});
     bot.db.collection("configs").find({ _id: msg.guild.id }).toArray(async (error, config) => {
         if (config[0].swear_words.indexOf(args[0])) {
-            await bot.db.collection("configs").updateOne({ _id: msg.guild.id }, { $set: { swear_words: config[0].swear_words.splice(config[0].swear_words.indexOf(args[0]), 1) } });
+            config[0].swear_words.splice(config[0].swear_words.indexOf(), 1);
+            await bot.db.collection("configs").updateOne({ _id: msg.guild.id }, { $set: { swear_words: config[0].swear_words } });
             msg.channel.send(":white_check_mark: Swear word removed.");
         } else { return msg.channel.send(":x: Swear word not found."); }
     });

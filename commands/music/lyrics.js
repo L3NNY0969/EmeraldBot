@@ -1,7 +1,8 @@
-const superagent = require("cheerio");
+const { get } = require("superagent");
 const cheerio = require("cheerio");
 
 module.exports.run = async (bot, msg, args) => {
+    if (!msg.channel.permissionsFor(bot.user).has(["EMBED_LINKS", "SEND_MESSAGES"])) return;
     if (!args.join(" ")) {
         return msg.channel.send(":x: Please enter a song name.");
     } else {
@@ -13,7 +14,14 @@ module.exports.run = async (bot, msg, args) => {
             const title = firstRes("h1", "div.pagetitle").text();
             const lyrics = firstRes("p#songLyricsDiv.songLyricsV14.iComment-text").text();
 
-            msg.channel.send(`**${title}**\n${lyrics}`, { split: true });
+            const embed = bot.embed({
+                title: `Lyrics for: ${title.replace(/lyrics/gi, "")}`,
+                description: lyrics,
+                footerIcon: msg.author.displayAvatarURL,
+                footer: `Lyrics requested by ${msg.author.tag}`,
+                timestamp: true
+            });
+            msg.channel.send({ embed: embed, split: true });
             msg.channel.stopTyping(true);
         } catch (error) {
             msg.channel.stopTyping(true);
@@ -32,6 +40,6 @@ module.exports.config = {
 };
 
 async function loadLink(link) {
-    const res = await superagent.get(link);
+    const res = await get(link);
     return cheerio.load(res.text);
 }

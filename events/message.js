@@ -1,15 +1,15 @@
 module.exports = async (bot, msg) => {
-    if (!msg.guild || msg.author.bot) return;
+    if (msg.author.bot) return;
     bot.db.collection("configs").find({ _id: msg.guild.id }).toArray(async (err, config) => {
         if (err) throw err;
-        if (!config) {
-            config = await bot.db.collection("configs").insertOne({ _id: msg.guild.id, mod_log: null, mod_log_cases: 0, welcome_channel: null, leave_msg: "Farewell **e{user}** we hope you enjoyed you're stay at **e{server_name}**!", prefix: "e.", anti_links: false, anti_swear: false, swear_words: ["SwearWord1", "SwearWord2"], auto_role: null });
-            check(msg, config);
-            msg.prefix = config.prefix;
+        if (!config[0]) {
+            config[0] = await bot.db.collection("configs").insertOne({ _id: msg.guild.id, mod_log: null, mod_log_cases: 0, welcome_channel: null, leave_msg: "Farewell **e{user}** we hope you enjoyed you're stay at **e{server_name}**!", prefix: "e.", anti_links: false, anti_swear: false, swear_words: ["SwearWord1", "SwearWord2"], auto_role: null });
+            check(msg, config[0]);
+            msg.prefix = config[0].prefix;
             return processCommand(bot, msg);
         } else {
-            check(msg, config);
-            msg.prefix = config.prefix;
+            check(msg, config[0]);
+            msg.prefix = config[0].prefix;
             return processCommand(bot, msg);
         }
     });
