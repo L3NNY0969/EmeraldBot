@@ -28,7 +28,7 @@ module.exports.run = async (bot, msg, args) => {
 module.exports.config = {
     name: "setleave",
     usage: "setleave [message]",
-    description: "Sets the servers leave message, As simple as that.",
+    description: "Sets the servers leave message.",
     permission: "Administrator",
     category: "Configuration",
     aliases: ["sleave"]

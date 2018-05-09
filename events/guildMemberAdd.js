@@ -11,7 +11,7 @@ module.exports = (bot, member) => {
         const c = member.guild.channels.get(config[0].welcome_channel);
         if (!c) return;
         if (!c.permissionsFor(bot.user).has(["ATTACH_FILES", "SEND_MESSAGES"])) return;
-        if (!c.permissionsFor(bot.user).has("MANAGE_ROLES")) {} else if (!config[0].auto_role) {} else { member.addRole(config[0].auto_role, "Auto Role"); }
+        if (!c.permissionsFor(bot.user).has("MANAGE_ROLES")) {} else if (!config[0].auto_role) {} else { try { member.addRole(config[0].auto_role, "Auto Role"); } catch (e) {} }
 
         const makeWelcome = async () => {
             const pfp = await superagent.get(member.user.displayAvatarURL);

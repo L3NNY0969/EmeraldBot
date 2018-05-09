@@ -72,7 +72,7 @@ module.exports = async (bot) => {
         return e;
     };
 
-    bot.haste = (text) => {
+    bot.haste = function botHaste(text) {
         const promise = new Promise(async (res, rej) => {
             if (!text) return rej("Text needs to be provided!");
             post("https://hastebin.com/documents")
@@ -82,7 +82,7 @@ module.exports = async (bot) => {
         return promise;
     };
 
-    bot.escapeMarkdown = (text) => {
+    bot.escapeMarkdown = function botEscapeMD(text) {
         const newText = text
             .replace(/\*/g, "")
             .replace(/`/g, "")
@@ -100,5 +100,16 @@ module.exports = async (bot) => {
             .replace(/\(/g, "")
             .replace(/\)/g, "");
         return newText;
+    };
+
+    bot.reboot = function botReboot() {
+        const rebooted = new Promise(async (res, rej) => {
+            if (bot.commands.size === 0 || bot.commands.size === 0) return rej(":x: Command loading failed. No commands or aliases where found.");
+            bot.commands.clear();
+            bot.aliases.clear();
+            bot.emit("ready");
+            return res(":white_check_mark: Reboot success.");
+        });
+        return rebooted;
     };
 };

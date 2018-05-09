@@ -12,11 +12,12 @@ module.exports.run = async (bot, msg) => {
             { name: "Servers:", value: bot.guilds.size, inline: true },
             { name: "Users:", value: bot.users.size, inline: true },
             { name: "Commands:", value: bot.commands.size, inline: true },
-            { name: "CPU Usage (All Cores):", value: handleCpuUsage(), inline: true },
-            { name: "Free Memory:", value: handleFreeMemory(), inline: true },
-            { name: "Memory Usage:", value: handleMemoryUsage(), inline: true },
+            { name: "System CPU Usage:", value: handleCpuUsage(), inline: true },
+            { name: "System Free Memory:", value: handleFreeMemory(), inline: true },
+            { name: "System Memory Usage:", value: handleMemoryUsage(), inline: true },
             { name: "Gateway Ping:", value: `${Math.floor(bot.ping)}ms`, inline: true },
-            { name: "Uptime:", value: handleUptime(), inline: true }
+            { name: "System Uptime:", value: handleSystemUptime(), inline: true },
+            { name: "Bot Uptime:", value: handleBotUptime(), inline: true }
         ],
         footer: `Status report requested by ${msg.author.tag}`,
         footerIcon: msg.author.displayAvatarURL
@@ -56,7 +57,50 @@ function handleCpuUsage() {
     return `${Math.floor(total)}%`;
 }
 
-function handleUptime() {
+function handleSystemUptime() {
+    let uptime = "";
+    let seconds = Math.floor(os.uptime());
+    const days = Math.floor(seconds / (3600 * 24));
+    seconds -= days * 3600 * 24;
+    const hrs = Math.floor(seconds / 3600);
+    seconds -= hrs * 3600;
+    const minutes = Math.floor(seconds / 60);
+    seconds -= minutes * 60;
+
+    if (days > 0) {
+        if (days > 1) {
+            uptime += `${days} days, `;
+        } else {
+            uptime += `${days} day, `;
+        }
+    } else { uptime += ""; }
+
+    if (hrs > 0) {
+        if (hrs > 1) {
+            uptime += `${hrs} hours, `;
+        } else {
+            uptime += `${hrs} hour, `;
+        }
+    } else { uptime += ""; }
+
+    if (minutes > 0) {
+        if (minutes > 1) {
+            uptime += `${minutes} minutes, and `;
+        } else {
+            uptime += `${minutes} minute, and `;
+        }
+    } else { uptime += ""; }
+
+    if (seconds > 1) {
+        uptime += `${seconds} seconds`;
+    } else {
+        uptime += `${seconds} second`;
+    }
+
+    return uptime;
+}
+
+function handleBotUptime() {
     let uptime = "";
     let seconds = Math.floor(process.uptime());
     const days = Math.floor(seconds / (3600 * 24));

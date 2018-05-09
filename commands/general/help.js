@@ -14,7 +14,7 @@ module.exports.run = async (bot, msg, args) => {
                 description: general.size === 0 ? "None" : `\`\`\`${general.map(c => `${c.config.name}: ${c.config.description} ${c.config.aliases.length === 0 ? "" : `(Aliases: ${c.config.aliases.join(", ")})`} ${c.config.permission === "None" ? "" : `(Perm: ${c.config.permission})`}`).join("\n")}\`\`\``
             },
             {
-                title: "Configuration",
+                title: `Configuration Commands ${configuration.size === 0 ? "" : `(${configuration.size} total)`}`,
                 description: configuration.size === 0 ? "None" : `\`\`\`${configuration.map(c => `${c.config.name}: ${c.config.description} ${c.config.aliases.length === 0 ? "" : `(Aliases: ${c.config.aliases.join(", ")})`} ${c.config.permission === "None" ? "" : `(Perm: ${c.config.permission})`}`).join("\n")}\`\`\``
             },
             {
@@ -42,7 +42,7 @@ module.exports.run = async (bot, msg, args) => {
             pages.push({ title: `Owner Commands ${owner.size === 0 ? "" : `(${general.size} total)`}`, description: music.size === 0 ? "None" : `\`\`\`${music.map(c => `${c.config.name}: ${c.config.description} ${c.config.aliases.length === 0 ? "" : `(Aliases: ${c.config.aliases.join(", ")})`} ${c.config.permission === "None" ? "" : `(Perm: ${c.config.permission})`}`).join("\n")}\`\`\`` });
         }
         const Paginator = require("../../utils/paginator.js");
-        const session = new Paginator(msg, pages, `Emerald Bot Help`, bot.color);
+        const session = new Paginator(msg, pages, bot.color);
         await session.start();
     } else if (args[0].match(/General|Configuration|Utility|Fun|Math|Moderation|Music/i)) {
         const general = bot.commands.filter(c => c.config.category === "General"),
@@ -55,31 +55,31 @@ module.exports.run = async (bot, msg, args) => {
         let Paginator = require("../../utils/paginator.js");
         switch (args[0].toLowerCase()) {
         case "general": {
-            Paginator = new Paginator(msg, [{ title: "General Commands", description: general.size === 0 ? "None" : `\`\`\`${general.map(c => `${c.config.name}: ${c.config.description} ${c.config.aliases.length === 0 ? "" : `(Aliases: ${c.config.aliases.join(", ")})`} ${c.config.permission === "None" ? "" : `(Perm: ${c.config.permission})`}`).join("\n")}\`\`\`` }], "Emerald Bot Help", bot.color, true);
+            Paginator = new Paginator(msg, [{ title: "General Commands", description: general.size === 0 ? "None" : `\`\`\`${general.map(c => `${c.config.name}: ${c.config.description} ${c.config.aliases.length === 0 ? "" : `(Aliases: ${c.config.aliases.join(", ")})`} ${c.config.permission === "None" ? "" : `(Perm: ${c.config.permission})`}`).join("\n")}\`\`\`` }], bot.color, true);
             break;
         }
         case "configuration": {
-            Paginator = new Paginator(msg, [{ title: "Configuration Commands", description: configuration.size === 0 ? "None" : `\`\`\`${configuration.map(c => `${c.config.name}: ${c.config.description} ${c.config.aliases.length === 0 ? "" : `(Aliases: ${c.config.aliases.join(", ")})`} ${c.config.permission === "None" ? "" : `(Perm: ${c.config.permission})`}`).join("\n")}\`\`\`` }], "Emerald Bot Help", bot.color, true);
+            Paginator = new Paginator(msg, [{ title: "Configuration Commands", description: configuration.size === 0 ? "None" : `\`\`\`${configuration.map(c => `${c.config.name}: ${c.config.description} ${c.config.aliases.length === 0 ? "" : `(Aliases: ${c.config.aliases.join(", ")})`} ${c.config.permission === "None" ? "" : `(Perm: ${c.config.permission})`}`).join("\n")}\`\`\`` }], bot.color, true);
             break;
         }
         case "utility": {
-            Paginator = new Paginator(msg, [{ title: "Utility Commands", description: utility.size === 0 ? "None" : `\`\`\`${utility.map(c => `${c.config.name}: ${c.config.description} ${c.config.aliases.length === 0 ? "" : `(Aliases: ${c.config.aliases.join(", ")})`} ${c.config.permission === "None" ? "" : `(Perm: ${c.config.permission})`}`).join("\n")}\`\`\`` }], "Emerald Bot Help", bot.color, true);
+            Paginator = new Paginator(msg, [{ title: "Utility Commands", description: utility.size === 0 ? "None" : `\`\`\`${utility.map(c => `${c.config.name}: ${c.config.description} ${c.config.aliases.length === 0 ? "" : `(Aliases: ${c.config.aliases.join(", ")})`} ${c.config.permission === "None" ? "" : `(Perm: ${c.config.permission})`}`).join("\n")}\`\`\`` }], bot.color, true);
             break;
         }
         case "fun": {
-            Paginator = new Paginator(msg, [{ title: "Fun Commands", description: fun.size === 0 ? "None" : `\`\`\`${fun.map(c => `${c.config.name}: ${c.config.description} ${c.config.aliases.length === 0 ? "" : `(Aliases: ${c.config.aliases.join(", ")})`} ${c.config.permission === "None" ? "" : `(Perm: ${c.config.permission})`}`).join("\n")}\`\`\`` }], "Emerald Bot Help", bot.color, true);
+            Paginator = new Paginator(msg, [{ title: "Fun Commands", description: fun.size === 0 ? "None" : `\`\`\`${fun.map(c => `${c.config.name}: ${c.config.description} ${c.config.aliases.length === 0 ? "" : `(Aliases: ${c.config.aliases.join(", ")})`} ${c.config.permission === "None" ? "" : `(Perm: ${c.config.permission})`}`).join("\n")}\`\`\`` }], bot.color, true);
             break;
         }
         case "math": {
-            Paginator = new Paginator(msg, [{ title: "Math Commands", description: math.size === 0 ? "None" : `\`\`\`${math.map(c => `${c.config.name}: ${c.config.description} ${c.config.aliases.length === 0 ? "" : `(Aliases: ${c.config.aliases.join(", ")})`} ${c.config.permission === "None" ? "" : `(Perm: ${c.config.permission})`}`).join("\n")}\`\`\`` }], "Emerald Bot Help", bot.color, true);
+            Paginator = new Paginator(msg, [{ title: "Math Commands", description: math.size === 0 ? "None" : `\`\`\`${math.map(c => `${c.config.name}: ${c.config.description} ${c.config.aliases.length === 0 ? "" : `(Aliases: ${c.config.aliases.join(", ")})`} ${c.config.permission === "None" ? "" : `(Perm: ${c.config.permission})`}`).join("\n")}\`\`\`` }], bot.color, true);
             break;
         }
         case "moderation": {
-            Paginator = new Paginator(msg, [{ title: "Moderation Commands", description: mod.size === 0 ? "None" : `\`\`\`${mod.map(c => `${c.config.name}: ${c.config.description} ${c.config.aliases.length === 0 ? "" : `(Aliases: ${c.config.aliases.join(", ")})`} ${c.config.permission === "None" ? "" : `(Perm: ${c.config.permission})`}`).join("\n")}\`\`\`` }], "Emerald Bot Help", bot.color, true);
+            Paginator = new Paginator(msg, [{ title: "Moderation Commands", description: mod.size === 0 ? "None" : `\`\`\`${mod.map(c => `${c.config.name}: ${c.config.description} ${c.config.aliases.length === 0 ? "" : `(Aliases: ${c.config.aliases.join(", ")})`} ${c.config.permission === "None" ? "" : `(Perm: ${c.config.permission})`}`).join("\n")}\`\`\`` }], bot.color, true);
             break;
         }
         case "music": {
-            Paginator = new Paginator(msg, [{ title: "Music Commands", description: music.size === 0 ? "None" : `\`\`\`${music.map(c => `${c.config.name}: ${c.config.description} ${c.config.aliases.length === 0 ? "" : `(Aliases: ${c.config.aliases.join(", ")})`} ${c.config.permission === "None" ? "" : `(Perm: ${c.config.permission})`}`).join("\n")}\`\`\`` }], "Emerald Bot Help", bot.color, true);
+            Paginator = new Paginator(msg, [{ title: "Music Commands", description: music.size === 0 ? "None" : `\`\`\`${music.map(c => `${c.config.name}: ${c.config.description} ${c.config.aliases.length === 0 ? "" : `(Aliases: ${c.config.aliases.join(", ")})`} ${c.config.permission === "None" ? "" : `(Perm: ${c.config.permission})`}`).join("\n")}\`\`\`` }], bot.color, true);
             break;
         }
         default: { return msg.channel.send(":x: Command category not found."); }

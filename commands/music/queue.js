@@ -13,7 +13,7 @@ module.exports.run = async (bot, msg) => {
                 });
             }
             const Paginator = require("../../utils/paginator.js");
-            const PaginatorSession = new Paginator(msg, queuePages, `Music Queue for: ${msg.guild.name}`, "RANDOM");
+            const PaginatorSession = new Paginator(msg, queuePages, "RANDOM");
             PaginatorSession.start();
         } else { return msg.channel.send(":x: I need the `Embed Links` or the `Send Messages` permission. Please give me these permission and try again!"); }
     } else { return msg.channel.send(":x: Nothing is in queue!"); }

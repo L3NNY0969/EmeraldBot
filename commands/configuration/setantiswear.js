@@ -33,7 +33,7 @@ module.exports.run = async (bot, msg, args) => {
 module.exports.config = {
     name: "setantiswear",
     usage: "setantiswear [yes | no]",
-    description: "Turns on or off Anti Swear for your server NOTE: You must add the words manually.",
+    description: "Turns on or off Anti Swear. Words must be added manually.",
     permission: "Administrator",
     category: "Configuration",
     aliases: ["santiswear"]

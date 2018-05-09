@@ -19,7 +19,7 @@ module.exports.run = async (bot, msg, args) => {
 module.exports.config = {
     name: "addswearword",
     usage: "addswearword [word]",
-    description: "Adds a swear word to the servers swear word list.",
+    description: "Adds a swear word.",
     permission: "Administrator",
     category: "Configuration",
     aliases: ["aswearword", "asw"]

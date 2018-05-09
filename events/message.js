@@ -28,7 +28,7 @@ function check(msg, config) {
 
     // Anti links check
     if (config.anti_links && !msg.member.permissions.has("ADMINISTRATOR") && msg.author.id !== msg.guild.owner.id) {
-        // Thanks Godson™#4036 for this RegEx.
+        // Thanks Godson™#1337 for this RegEx.
         const urlMatch = /^(?:(http[s]?|ftp[s]):\/\/)?([^:\s]+)(:[0-9]+)?((?:\/\w+)*\/)([\w\-.]+[^#?\s]+)([^#\s]*)?(#[\w-]+)?$/gi.exec(msg.content);
         if (urlMatch) {
             msg.delete().catch(() => {});
@@ -39,9 +39,10 @@ function check(msg, config) {
 
 function processCommand(bot, msg) {
     if (!msg.content.toLowerCase().startsWith(msg.prefix.toLowerCase())) return;
-    const split = msg.content.toLowerCase().split(/\s+/g);
+    const split = msg.content.split(/\s+/g);
     const args = split.slice(1);
-    const c = bot.commands.get(split[0].slice(msg.prefix.length)) || bot.aliases.get(split[0].slice(msg.prefix.length));
+    const command = split[0].toLowerCase();
+    const c = bot.commands.get(command.slice(msg.prefix.length)) || bot.aliases.get(command.slice(msg.prefix.length));
     if (c) {
         switch (c.config.permission) {
         case "None": { c.run(bot, msg, args); break; }
@@ -64,7 +65,7 @@ function checkPermission(cmd, permission, success = () => {}, msg) {
         if (msg.author.id === msg.guild.owner.id) return success();
         else return msg.channel.send(`:x: You cannot run this command as you need to be the server owner!`).then(m => m.delete(3500));
     } else if (permission === "BOT_OWNER") {
-        if (msg.author.id === "302604426781261824" || msg.author.id === "199436790581559296") return success();
-        else return msg.channel.send(`:x: You cannot run this command as you need to be the bot owner!`).then(m => m.delete(3500));
+        if (msg.author.id === "302604426781261824" || msg.author.id === "") return success();
+        else return msg.channel.send(`:x: You cannot run this command as you need to be one of the bot owners!`).then(m => m.delete(3500));
     } else if (msg.member.permissions.has(permission)) { return success(); } else { return msg.channel.send(`:x: You cannot run this command as it requires the \`${cmd.config.permission}\` permission!`).then(m => m.delete(3500)); }
 }

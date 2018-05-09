@@ -7,7 +7,7 @@ module.exports = (bot, member) => {
         if (!c) return;
         if (!c.permissionsFor(bot.user).has("SEND_MESSAGES")) return;
 
-        c.send(config.leave_msg
+        c.send(config[0].leave_msg
             .replace("e{user}", member.user.tag)
             .replace("e{server_name}", member.guild.name)
             .replace("e{server_id}", member.guild.id)
