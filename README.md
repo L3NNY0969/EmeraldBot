@@ -1,6 +1,7 @@
 Acknowledgements:
 
-**[AdityaTD - Good Friend](https://github.com/AdityaTD)** Really I've waited for this all meh lyfe for a popular bot dev being a owner with me :heart:.
+**[AdityaTD - Good Friend](https://github.com/AdityaTD)** Really I've waited for this all meh lyfe for a popular bot dev being a owner with me.
+
 **[kyranet - Canvas Constructor](https://github.com/kyranet/canvasConstructor)** For the invert code I took so I'm crediting them.
 
 Contributing:
