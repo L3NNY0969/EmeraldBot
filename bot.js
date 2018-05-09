@@ -21,5 +21,4 @@ const startBot = async () => {
         }, 250);
     });
 };
-
 startBot();

@@ -34,11 +34,13 @@ module.exports.run = async (bot, msg, args) => {
     } else if (search.match(/(\?|\&)list=(.*)/)) { // eslint-disable-line
         msg.channel.startTyping();
         return getVideos(search).then(v => {
-            for (let i = 0; i < v.length; i++) {
+            let songs = 0;
+            for (let i = 0; i < 200; i++) {
+                songs++;
                 handleQueue(v[i], msg, bot, true);
             }
             msg.channel.stopTyping(true);
-            msg.channel.send(`:white_check_mark: Playlist has been added with **${v.length}** songs.`);
+            msg.channel.send(`:white_check_mark: Playlist has been added. I've added **${songs}** songs from that playlist to the queue.`);
         }).catch(() => {
             msg.channel.stopTyping(true);
             return msg.channel.send(":x: No results where found.");
