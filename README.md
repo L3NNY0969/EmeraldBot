@@ -1,14 +1,14 @@
-Acknowledgements:
+# Acknowledgements:
 
 **[AdityaTD - Good Friend](https://github.com/AdityaTD)** Really I've waited for this all meh lyfe for a popular bot dev being a owner with me.
 
 **[kyranet - Canvas Constructor](https://github.com/kyranet/canvasConstructor)** For the invert code I took so I'm crediting them.
 
-Contributing:
+# Contributing:
 
-###### To contribute to emerald bot simple submit a pull request briefly describing the changes you made. If they are good enough me Or AdityaTD will accept it or we will deny it with the appropriate reason.
+To contribute to emerald bot simple submit a pull request briefly describing the changes you made. If they are good enough me Or AdityaTD will accept it or we will deny it with the appropriate reason.
 
-License *NOTE: make sure to credit me or Adi if you use our code*:
+# License *NOTE: make sure to credit me or Adi if you use our code*:
 ```
 MIT License
 
