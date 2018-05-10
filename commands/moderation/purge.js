@@ -9,7 +9,7 @@ module.exports.run = async (bot, msg, args) => {
             }));
         } else {
             if (!toDelete || toDelete < 2 || toDelete > 100) return msg.channel.send(bot.embed({ description: "Please provide a number between 2 and 100." }));
-            const success = msg.channel.bulkDelete(args);
+            const success = await msg.channel.bulkDelete(parseInt(args[0]));
             if (success) return msg.channel.send(bot.embed({ title: `Purged ${toDelete} messages!` })).then(m => m.delete(1500));
         }
     } else {

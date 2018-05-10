@@ -8,7 +8,7 @@
 
 To contribute to emerald bot simple submit a pull request briefly describing the changes you made. If they are good enough me Or AdityaTD will accept it or we will deny it with the appropriate reason.
 
-# License *NOTE: make sure to credit me or Adi if you use our code*:
+# License:
 ```
 MIT License
 

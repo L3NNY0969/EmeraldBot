@@ -11,6 +11,7 @@ module.exports = async (bot) => {
     bot.commands = new Collection();
     bot.aliases = new Collection();
 
+    bot.magikCooldowns = new Set();
     bot.color = 0x55B88E;
     bot.invite = await bot.generateInvite(["ADMINISTRATOR"]);
 
