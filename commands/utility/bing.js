@@ -10,8 +10,7 @@ module.exports.run = async (bot, msg, args) => {
 
             $("li.b_algo").each((i, e) => {
                 results.push({
-                    title: $(e).first().find("h2").filter(a => a !== null).first().text(),
-                    link: $(e).first().find("a").first().attr("href"),
+                    title: $(e).first().find("h2").filter(a => a !== undefined).first().text() ? $(e).first().find("h2").filter(a => a !== undefined).first().text() : "No Title Specified",
                     description: $(e).first().find("p").first().text()
                 });
             });

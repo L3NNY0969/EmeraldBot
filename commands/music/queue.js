@@ -1,11 +1,10 @@
 module.exports.run = async (bot, msg) => {
-    const player = bot.players.get(msg.guild.id);
-    const llplayer = bot.player.get(msg.guild.id);
-    if (llplayer) {
+    const player = bot.player.players.get(msg.guild.id);
+    if (player) {
         if (msg.channel.permissionsFor(bot.user).has(["EMBED_LINKS", "SEND_MESSAGES"])) {
             const queuePages = [];
-            for (let i = 0; i < player.songs.length; i += 8) {
-                const sliced = player.songs.slice(i + 1, i + 8);
+            for (let i = 0; i < player.queue.length; i += 8) {
+                const sliced = player.queue.slice(i + 1, i + 8);
                 if (sliced.length === 0) return msg.channel.send(":x: The queue is empty.");
                 queuePages.push({
                     title: `Displaying songs from \`${i + 1}\` to \`${i + sliced.length}\``,

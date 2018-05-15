@@ -1,23 +1,20 @@
 module.exports.run = async (bot, msg) => {
-    const player = bot.players.get(msg.guild.id);
-    const llplayer = bot.player.get(msg.guild.id);
+    const player = bot.player.players.get(msg.guild.id);
     if (!msg.member.voiceChannel) return msg.channel.send(":x: You must be in a voice channel first.");
-    if (llplayer) {
-        if (msg.member.voiceChannel.id !== player.voiceChannel.id) {
+    if (player) {
+        if (msg.member.voiceChannel.id !== msg.guild.me.voiceChannelID) {
             return msg.channel.send(":x: You must be in the same voice channel as the bot.");
         } else {
-            if (msg.author.id !== player.songs[0].requester.id && !msg.member.hasPermission("ADMINISTRATOR")) return msg.channel.send(":x: You must be the person who requested this song or have the administrator permission!");
-            if (player.con.playing === true) {
-                player.con.playing = false;
-                llplayer.pause(true);
+            if (msg.author.id !== player.queue[0].requester.id && !msg.member.hasPermission("ADMINISTRATOR")) return msg.channel.send(":x: You must be the person who requested this song or have the administrator permission!");
+            if (player.playing === true) {
+                player.pause();
             } else {
-                player.con.playing = true;
-                llplayer.pause(false);
+                player.resume();
             }
-            return msg.channel.send(`:white_check_mark: The player **${player.con.playing ? "is now resumed" : "is now paused"}**.`);
+            return msg.channel.send(`:white_check_mark: The player **${player.playing ? "is now resumed" : "is now paused"}**.`);
         }
     } else {
-        msg.channel.send(":x: Nothing is playing to pause!");
+        msg.channel.send(":x: Nothing is playing!");
     }
 };
 

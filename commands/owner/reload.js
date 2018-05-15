@@ -23,7 +23,6 @@ module.exports.run = async (bot, msg, args) => {
                     const command = require(`../${args[1].split("/")[0]}/${args[1].split("/")[1]}.js`);
                     bot.commands.set(command.config.name, command);
                     msg.channel.send(":white_check_mark: That command has been reloaded.");
-                    delete require.cache[require.resolve(`../${args[1].split("/")[0]}/${args[1].split("/")[1]}.js`)];
                 } catch (error) {
                     return msg.channel.send(":x: That command was not found.");
                 }

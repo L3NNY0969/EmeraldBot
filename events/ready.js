@@ -1,16 +1,13 @@
 const { MongoClient } = require("mongodb");
 const { readdirSync, readdir } = require("fs");
-const { PlayerManager } = require("discord.js-lavalink");
+const AudioManager = require("../utils/music/AudioManager.js");
 const { Collection, RichEmbed } = require("discord.js");
 const { post } = require("superagent");
 
 module.exports = async (bot) => {
     bot.ttt = new Collection();
-    bot.players = new Collection();
-
     bot.commands = new Collection();
     bot.aliases = new Collection();
-
     bot.magikCooldowns = new Set();
     bot.color = 0x55B88E;
     bot.invite = await bot.generateInvite(["ADMINISTRATOR"]);
@@ -36,14 +33,17 @@ module.exports = async (bot) => {
 [INFO] Invite link: ${bot.invite}
 `.trim());
     bot.user.setActivity(`with ${bot.guilds.size} emeralds | e.help`);
-    bot.player = new PlayerManager(bot, bot.config.nodes, {
-        user: bot.user.id,
-        shards: 1
-    });
+    bot.player = new AudioManager(bot);
     MongoClient.connect(bot.config.mongo.url, (error, client) => {
         if (error) return console.log(`[MONGO] Failed to connect to MongoDB for: ${error.message}`);
         bot.db = client.db(bot.config.mongo.database);
         console.log("[MONGO] Connected to MongoDB.");
+    });
+    bot.player.nodes.forEach(n => {
+        n.on("ready", () => console.log("Node is ready."));
+        n.on("error", e => console.error(e));
+        n.on("close", c => console.log(c));
+        n.on("messgae", m => console.log(m));
     });
 
     // Functions that can only be used until the bot is ready

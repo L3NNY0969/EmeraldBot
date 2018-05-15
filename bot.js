@@ -14,7 +14,7 @@ const startBot = async () => {
     });
 
     process.on("SIGINT", () => {
-        console.log(`[INFO] Shutting down with ${bot.players.size} players, ${bot.ttt.size} TicTacToe games, ${bot.guilds.size} servers and ${bot.users.size} users!`);
+        console.log(`[INFO] Shutting down with ${bot.player.players.size} players, ${bot.ttt.size} TicTacToe games, ${bot.guilds.size} servers and ${bot.users.size} users!`);
         setTimeout(() => {
             bot.destroy();
             process.exit();

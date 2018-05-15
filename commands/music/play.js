@@ -1,5 +1,6 @@
 const { RichEmbed } = require("discord.js");
-const { get } = require("snekfetch");
+const { Util } = require("discord.js");
+const { nodes } = require("../../config.json"); // eslint-disable-line
 
 module.exports.run = async (bot, msg, args) => {
     const search = args.join(" ");
@@ -14,7 +15,7 @@ module.exports.run = async (bot, msg, args) => {
     if (!voicePerms.has(["CONNECT", "SPEAK"])) return;
 
     if (search.match(/https:\/\/?(www\.)?youtube\.com\/watch\?v=(.*)/)) {
-        return getVideos(search).then(v => {
+        return bot.player.getVideos(search, nodes[0]).then(v => {
             msg.channel.startTyping();
             handleQueue(v[0], msg, bot);
             msg.channel.stopTyping();
@@ -23,7 +24,7 @@ module.exports.run = async (bot, msg, args) => {
             return msg.channel.send(":x: No results where found.");
         });
     } else if (search.match(/https:\/\/?(www\.)?youtu\.be\/(.*)/)) {
-        return getVideos(search).then(v => {
+        return bot.player.getVideos(search, nodes[0]).then(v => {
             msg.channel.startTyping();
             handleQueue(v[0], msg, bot);
             msg.channel.stopTyping();
@@ -33,7 +34,7 @@ module.exports.run = async (bot, msg, args) => {
         });
     } else if (search.match(/(\?|\&)list=(.*)/)) { // eslint-disable-line
         msg.channel.startTyping();
-        return getVideos(search).then(v => {
+        return bot.player.getVideos(search, nodes[0]).then(v => {
             let songs = 0;
             for (let i = 0; i < 200; i++) {
                 songs++;
@@ -47,7 +48,7 @@ module.exports.run = async (bot, msg, args) => {
         });
     } else {
         msg.channel.startTyping();
-        const videos = await getVideos(`ytsearch:${search}`).catch(e => msg.channel.send(`\`\`\`xl\n${e.stack}\`\`\``));
+        const videos = await bot.player.getVideos(`ytsearch:${search}`, nodes[0]).catch(() => msg.channel.send(`:x: No results found.`));
         msg.channel.stopTyping();
         let num = 0;
         const m = await msg.channel.send(new RichEmbed()
@@ -80,36 +81,31 @@ module.exports.run = async (bot, msg, args) => {
 async function handleQueue(video, msg, bot, playlist = false) {
     const song = {
         track: video.track,
-        title: bot.escapeMarkdown(video.info.title),
-        author: bot.escapeMarkdown(video.info.author),
+        title: Util.escapeMarkdown(video.info.title),
+        author: Util.escapeMarkdown(video.info.author),
         duration: video.info.length,
         stream: video.info.isStream,
         url: video.info.uri,
         requester: msg.author
     };
 
-    if (bot.players.get(msg.guild.id)) {
-        bot.players.get(msg.guild.id).songs.push(song);
-        if (playlist === true) return; else return msg.channel.send(`A new song has been added to the queue by **${msg.author.tag}** (Position: ${bot.players.get(msg.guild.id).songs.length - 1}): **__${song.title}__** by **${song.author}**`);
-    } else {
-        bot.players.set(msg.guild.id, {
-            songs: [],
-            volume: 2,
-            voiceChannel: msg.member.voiceChannel,
-            playing: false,
-            looping: false,
-            con: null
-        });
+    const player = bot.player.players.get(msg.guild.id);
 
-        bot.players.get(msg.guild.id).playing = true;
-        bot.players.get(msg.guild.id).songs.push(song);
+    if (player) {
+        player.queue.push(song);
+        if (playlist === true) return; else return msg.channel.send(`A new song has been added to the queue by **${msg.author.tag}** (Position: ${player.queue.length - 1}): **__${song.title}__** by **${song.author}**`);
+    } else {
+        await bot.player.connectToVoice({
+            guildId: msg.guild.id,
+            channelId: msg.member.voiceChannel.id,
+            self_deafened: false,
+            self_muted: false,
+            host: "localhost"
+        });
+        bot.player.players.get(msg.guild.id).playing = true;
+        bot.player.players.get(msg.guild.id).queue.push(song);
 
         try {
-            bot.players.get(msg.guild.id).con = await bot.player.join({
-                guild: msg.guild.id,
-                channel: msg.member.voiceChannel.id,
-                host: "localhost"
-            });
             play(msg, bot);
         } catch (e) {
             msg.channel.send(`\`\`\`js\n${e.stack}\`\`\``);
@@ -118,17 +114,17 @@ async function handleQueue(video, msg, bot, playlist = false) {
 }
 
 async function play(msg, bot) {
-    const player = bot.players.get(msg.guild.id);
-    const llplayer = bot.player.get(msg.guild.id);
-    llplayer.volume(50);
-    await llplayer.play(player.songs[0].track);
-    llplayer.on("end", async endEvent => {
-        if (endEvent.reason === "REPLACED") {
-            return msg.channel.send(`Now playing **${player.songs[0].title}** as requested by *${player.songs[0].requester.tag}*.`);
-        } else if (endEvent.reason === "FINISHED") {
+    const player = bot.player.players.get(msg.guild.id);
+    player.setVolume(50);
+    player.play(player.queue[0].track);
+    player.on("end", async event => {
+        console.log(event);
+        if (event.reason === "REPLACED") {
+            return msg.channel.send(`Now playing **${player.queue[0].title}** as requested by *${player.queue[0].requester.tag}*.`);
+        } else if (event.reason === "FINISHED") {
             if (player.looping) {
-                await llplayer.play(player.songs[0].track);
-                return msg.channel.send(`Now playing *on loop* **${player.songs[0].title}** as requested by *${player.songs[0].requester.tag}*.`);
+                await player.play(player.queue[0].track);
+                return msg.channel.send(`Now playing *on loop* **${player.queue[0].title}** as requested by *${player.queue[0].requester.tag}*.`);
             } else {
                 player.songs.shift();
                 if (player.songs.length === 0) {
@@ -136,14 +132,14 @@ async function play(msg, bot) {
                     return bot.players.delete(msg.guild.id);
                 } else {
                     setTimeout(async () => {
-                        await llplayer.play(player.songs[0].track);
-                        return msg.channel.send(`Now playing **${player.songs[0].title}** as requested by *${player.songs[0].requester.tag}*.`);
+                        await player.play(player.queue[0].track);
+                        return msg.channel.send(`Now playing **${player.queue[0].title}** as requested by *${player.queue[0].requester.tag}*.`);
                     }, 500);
                 }
             }
         }
     });
-    return msg.channel.send(`Now playing **${player.songs[0].title}** as requested by *${player.songs[0].requester.tag}*.`);
+    return msg.channel.send(`Now playing **${player.queue[0].title}** as requested by *${player.queue[0].requester.tag}*.`);
 }
 
 module.exports.config = {
@@ -154,15 +150,3 @@ module.exports.config = {
     category: "Music",
     aliases: ["p"]
 };
-
-async function getVideos(search) {
-    const res = await get(`http://localhost:2333/loadtracks?identifier=${search}`)
-        .set("Authorization", "PartyBot")
-        .catch(err => {
-            console.error(err);
-            return null;
-        });
-    if (!res) throw "There was an error, try again";
-    if (!res.body.length) throw "No tracks found";
-    return res.body;
-}

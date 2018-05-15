@@ -7,7 +7,7 @@ module.exports.run = async (bot, msg) => {
             icon: bot.user.avatarURL
         },
         fields: [
-            { name: "Music players:", value: bot.players.size, inline: true },
+            { name: "Music players:", value: bot.player.players.size, inline: true },
             { name: "Tic Tac Toe games: ", value: bot.ttt.size, inline: true },
             { name: "Servers:", value: bot.guilds.size, inline: true },
             { name: "Users:", value: bot.users.size, inline: true },
