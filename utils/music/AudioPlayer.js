@@ -15,6 +15,7 @@ module.exports = class AudioPlayer extends EventEmitter {
          * Create the EventEmitter.
          */
         super();
+
         /**
          * The player the connectToVoice method returned.
          * @type {Object}
@@ -72,12 +73,11 @@ module.exports = class AudioPlayer extends EventEmitter {
      * @param {string} track - The track to play.
      */
     play(track) {
-        const obj = Object.assign({
+        this.node.sendToWS({
             op: "play",
             guildId: this.guildId,
             track: track
         });
-        this.node.sendToWS(obj);
         this.playing = true;
         this.playerState.currentTimestamp = Date.now();
     }
@@ -86,11 +86,10 @@ module.exports = class AudioPlayer extends EventEmitter {
      * Stops and deletes the current player.
      */
     stop() {
-        const obj = Object.assign({
+        this.node.sendToWS({
             op: "stop",
             guildId: this.guildId
         });
-        this.node.sendToWS(obj);
         this.manager.players.delete(this.guildId);
     }
 
@@ -98,12 +97,11 @@ module.exports = class AudioPlayer extends EventEmitter {
      * Tells the player to pause.
      */
     pause() {
-        const obj = Object.assign({
+        this.node.sendToWS({
             op: "pause",
             guildId: this.guildId,
             pause: true
         });
-        this.node.sendToWS(obj);
         this.playing = false;
     }
 
@@ -111,12 +109,11 @@ module.exports = class AudioPlayer extends EventEmitter {
      * Tells the player to resume.
      */
     resume() {
-        const obj = Object.assign({
+        this.node.sendToWS({
             op: "pause",
             guildId: this.guildId,
             pause: false
         });
-        this.node.sendToWS(obj);
         this.playing = true;
     }
 
@@ -125,13 +122,24 @@ module.exports = class AudioPlayer extends EventEmitter {
      * @param {number} volume - The new volume
      */
     setVolume(volume) {
-        const obj = Object.assign({
+        this.node.sendToWS({
             op: "volume",
             guildId: this.guildId,
             volume: volume
         });
-        this.node.sendToWS(obj);
         this.playerState.currentVolume = volume;
+    }
+
+    /**
+     * Tells the player to seek.
+     * @param {number} ms - The position to seek too.
+     */
+    seek(ms) {
+        this.node.sendToWS({
+            op: "seek",
+            guildId: this.guildId,
+            position: ms
+        });
     }
 
     /**
@@ -139,13 +147,12 @@ module.exports = class AudioPlayer extends EventEmitter {
      * @param {Object} data - The data Object from the VOICE_STATE_UPDATE event.
      */
     provideVoiceUpdate(data) {
-        const obj = Object.assign({
+        this.node.sendToWS({
             op: "voiceUpdate",
             guildId: this.guildId,
             sessionId: this.manager.client.guilds.get(this.guildId).me.voiceSessionID,
             event: data.d
         });
-        this.node.sendToWS(obj);
     }
 
     /**

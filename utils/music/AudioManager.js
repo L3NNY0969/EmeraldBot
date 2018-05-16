@@ -122,11 +122,12 @@ module.exports = class AudioManager extends EventEmitter {
      * Grabs videos/tracks from the lavalink REST api.
      * @param {string} search - The song to search for.
      * @param {Object} node - The node to execute the search on.
-     * @returns { Promise<Array> }
+     * @returns {Promise<Array>}
      */
     getVideos(search, node) {
         return new Promise(async (resolve, reject) => {
-            const res = await get(`http://${node.host}:2333/loadtracks?identifier=${search}`).set("Authorization", node.password);
+            const res = await get(`http://${node.host}:2333/loadtracks?identifier=${search}`)
+                .set("Authorization", node.password);
             if (!res.body.length) return reject("NO_RESULTS");
             return resolve(res.body);
         });

@@ -1,27 +1,33 @@
-module.exports.run = async (bot, msg) => {
-    const player = bot.player.players.get(msg.guild.id);
-    if (player) {
-        const embed = bot.embed({
-            author: {
-                name: "Current music status",
-                icon: bot.user.displayAvatarURL
-            },
-            fields: [
-                { name: "Now playing:", value: progressBar(player.queue[0], player.playerState.currentPosition, player.queue[0].duration) },
-                { name: "Simplified queue:", value: mapQueueOrSlice(player.queue) }
-            ]
-        });
-        msg.channel.send(embed);
-    } else { return msg.channel.send(":x: Nothing is playing!"); }
-};
+module.exports = class NowPlaying {
 
-module.exports.config = {
-    name: "nowplaying",
-    usage: "None",
-    description: "Displays whats playing in the current queue.",
-    permission: "None",
-    category: "Music",
-    aliases: ["np"]
+    constructor() {
+        this.config = {
+            name: "nowplaying",
+            usage: "None",
+            description: "Displays whats playing in the current queue.",
+            permission: "None",
+            category: "Music",
+            aliases: ["np"]
+        };
+    }
+
+    run(bot, msg) {
+        const player = bot.player.players.get(msg.guild.id);
+        if (player) {
+            const embed = bot.embed({
+                author: {
+                    name: "Current music status",
+                    icon: bot.user.displayAvatarURL
+                },
+                fields: [
+                    { name: "Now playing:", value: progressBar(player.queue[0], player.playerState.currentPosition, player.queue[0].duration) },
+                    { name: "Simplified queue:", value: mapQueueOrSlice(player.queue) }
+                ]
+            });
+            msg.channel.send(embed);
+        } else { return msg.channel.send(":x: Nothing is playing!"); }
+    }
+
 };
 
 function convert(time) {

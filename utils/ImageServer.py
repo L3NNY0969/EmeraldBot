@@ -1,10 +1,8 @@
 import websockets
 import asyncio
 import json
-import wand
 import requests
-from array import array
-from io import StringIO, BytesIO
+from io import BytesIO
 from wand.image import Image
 
 async def ImageSocket(websocket, path):

@@ -2,7 +2,7 @@ const { MongoClient } = require("mongodb");
 const { readdirSync, readdir } = require("fs");
 const AudioManager = require("../utils/music/AudioManager.js");
 const { Collection, RichEmbed } = require("discord.js");
-const { post } = require("superagent");
+const { post } = require("snekfetch");
 
 module.exports = async (bot) => {
     bot.ttt = new Collection();
@@ -14,15 +14,17 @@ module.exports = async (bot) => {
 
     const dirs = readdirSync("./commands/");
     dirs.forEach(dir => {
+        if (dir === "disabled") return;
         readdir(`./commands/${dir}`, (err, files) => {
             if (err) throw err;
             const js_files = files.filter(f => f.split(".").pop() === "js");
             if (js_files.length === 0) { console.log(`[INFO] Skipped dir ${dir} with reason: No commands to load!`); } else {
                 js_files.forEach(f => {
-                    const command = require(`../commands/${dir}/${f}`);
-                    bot.commands.set(command.config.name, command);
-                    for (const alias of command.config.aliases) {
-                        bot.aliases.set(alias, command);
+                    const Command = require(`../commands/${dir}/${f}`);
+                    const cmd = new Command();
+                    bot.commands.set(cmd.config.name, cmd);
+                    for (const alias of cmd.config.aliases) {
+                        bot.aliases.set(alias, cmd);
                     }
                 });
             }
@@ -38,12 +40,12 @@ module.exports = async (bot) => {
         if (error) return console.log(`[MONGO] Failed to connect to MongoDB for: ${error.message}`);
         bot.db = client.db(bot.config.mongo.database);
         console.log("[MONGO] Connected to MongoDB.");
+
     });
     bot.player.nodes.forEach(n => {
         n.on("ready", () => console.log("Node is ready."));
         n.on("error", e => console.error(e));
         n.on("close", c => console.log(c));
-        n.on("messgae", m => console.log(m));
     });
 
     // Functions that can only be used until the bot is ready
