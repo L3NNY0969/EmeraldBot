@@ -143,12 +143,10 @@ async function play(msg, bot) {
                 player.queue.shift();
                 if (player.queue.length === 0) {
                     bot.player.leaveVoice(msg.guild.id);
+                    bot.player.players.forEach(p => { p.pause(); return setTimeout(() => { p.resume(); }, 700); });
                 } else {
-                    bot.player.players.map(p => { p.pause(); return setTimeout(() => { p.resume(); }); });
-                    setTimeout(async () => {
-                        await player.play(player.queue[0].track);
-                        return msg.channel.send(`Now playing **${player.queue[0].title}** as requested by *${player.queue[0].requester.tag}*.`);
-                    }, 700);
+                    await player.play(player.queue[0].track);
+                    return msg.channel.send(`Now playing **${player.queue[0].title}** as requested by *${player.queue[0].requester.tag}*.`);
                 }
             }
         }
