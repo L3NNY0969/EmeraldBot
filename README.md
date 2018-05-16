@@ -1,5 +1,7 @@
 # Acknowledgements:
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8272a8e755604930b6f80873e3f07f57)](https://app.codacy.com/app/IceeMC/EmeraldBot?utm_source=github.com&utm_medium=referral&utm_content=IceeMC/EmeraldBot&utm_campaign=badger)
+
 **[AdityaTD - Good Friend](https://github.com/AdityaTD)** Really I've waited for this all meh lyfe for a popular bot dev being a owner with me.
 
 **[kyranet - Canvas Constructor](https://github.com/kyranet/canvasConstructor)** For the invert code I took so I'm crediting them.
