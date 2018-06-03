@@ -5,6 +5,8 @@ const { RichEmbed } = require("discord.js");
 const { post } = require("snekfetch");
 
 module.exports = async (bot) => {
+    bot.invite = await bot.generateInvite("ADMINISTRATOR");
+
     // Load commands
     const dirs = readdirSync("./commands/");
     dirs.forEach(dir => {
