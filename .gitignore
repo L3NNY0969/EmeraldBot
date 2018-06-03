@@ -2,8 +2,6 @@
 config.json
 assets/*
 node_modules/*
-commandformat.js
-testing.js
 package-lock.json
 package.json
 discash.js
