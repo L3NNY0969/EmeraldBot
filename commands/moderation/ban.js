@@ -24,27 +24,44 @@ module.exports = class Ban extends Command {
                 if (user.user.equals(bot.user)) {
                     return msg.channel.send(bot.embed({
                         title: ":white_check_mark: User not Banned!",
-                        description: `You cannot ban the Emerald.`,
+                        description: `You cannot ban the almighty lenny.`,
                         footer: `Not banned by ${msg.author.tag}`,
                         timestamp: true
                     }));
                 } else if (user.user.equals(msg.author)) {
                     return msg.channel.send(bot.embed({
                         title: ":white_check_mark: User not Banned!",
-                        description: `You cannot ban your self.`,
+                        description: `You cannot ban your self. **why would you want to do that?**`,
                         footer: `Not banned by ${msg.author.tag}`,
                         timestamp: true
                     }));
                 }
+                msg.delete().catch(() => {});
                 const reason = args.join(" ").slice(args[0].length + 1);
-                if (!reason) return msg.channel.send("Please provide a reason why you are banning this user.");
-                user.ban(`Banned by ${msg.author.tag} for ${reason}`).then(() => {
-                    msg.channel.send(bot.embed({
-                        title: ":white_check_mark: User Banned!",
-                        description: `\`${user.user.tag}\` has been banned for \`${reason}\` successfully.`,
-                        footer: `Banned by ${msg.author.tag}`,
-                        timestamp: true
-                    }));
+                user.ban(reason || "No reason provided by banner.").then(() => {
+                    msg.channel.send(`:white_check_mark: **${user.user.tag}** was banned for \`${reason || "No reason provided by banner"}\``);
+                    bot.db.collection("configs").find({ _id: msg.guild.id }).toArray(async (err, config) => {
+                        if (err) throw err;
+                        if (!config[0].mod_log) return;
+
+                        const channel = msg.guild.channels.get(config[0].mod_log);
+                        if (!channel || !channel.permissionsFor(bot.user).has(["SEND_MESSAGES", "EMBED_LINKS"])) return;
+
+                        config[0].mod_log_cases++;
+                        await bot.db.collection("configs").updateOne({ _id: msg.guild.id }, { $set: { mod_log_cases: config[0].mod_log_cases } });
+                        await channel.send(bot.embed({
+                            author: {
+                                name: `User banned with a hammer.`,
+                                icon: user.user.displayAvatarURL
+                            },
+                            fields: [
+                                { name: "User", value: user.user.tag },
+                                { name: "Banned By", value: msg.author.tag },
+                                { name: "Reason Provided", value: reason || "No reason provided by banner." }
+                            ],
+                            footer: `Case #${config[0].mod_log_cases}`
+                        }));
+                    });
                 }).catch(() => {
                     msg.channel.send(":x: This user cannot be banned.");
                 });

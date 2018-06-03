@@ -62,7 +62,7 @@ module.exports = class AudioNode extends EventEmitter {
      */
     create(NodeObj) {
         this.ws = new WebSocket(`ws://${NodeObj.host}:${NodeObj.port}`, { headers: this.nodeHeader(NodeObj) });
-        this.ws.on("open", this._ready.bind(this));
+        this.ws.on("open", this._ready.bind(this, NodeObj));
         this.ws.on("message", this._message.bind(this));
         this.ws.on("close", this._close.bind(this));
         this.ws.on("error", this._error.bind(this));

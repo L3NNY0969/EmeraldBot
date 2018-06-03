@@ -12,7 +12,7 @@ module.exports = class Support {
     }
 
     run(bot, msg) {
-        msg.channel.send(`You can join my support server using the link down below\n<https://discord.gg/7TWjKTa>`);
+        msg.channel.send(`You can join my support server using the link down below\n<https://discord.gg/6nyBVAT>`);
     }
 
 };

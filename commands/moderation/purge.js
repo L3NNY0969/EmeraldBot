@@ -34,4 +34,3 @@ module.exports = class Purge extends Command {
     }
 
 };
-

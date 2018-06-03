@@ -45,6 +45,28 @@ module.exports = class Kick extends Command {
                         footer: `Kicked by ${msg.author.tag}`,
                         timestamp: true
                     }));
+                    bot.db.collection("configs").find({ _id: msg.guild.id }).toArray(async (err, config) => {
+                        if (err) throw err;
+                        if (!config[0].mod_log) return;
+
+                        const channel = msg.guild.channels.get(config[0].mod_log);
+                        if (!channel || !channel.permissionsFor(bot.user).has(["SEND_MESSAGES", "EMBED_LINKS"])) return;
+
+                        config[0].mod_log_cases++;
+                        await bot.db.collection("configs").updateOne({ _id: msg.guild.id }, { $set: { mod_log_cases: config[0].mod_log_cases } });
+                        await channel.send(bot.embed({
+                            author: {
+                                name: `User kicked with the boot.`,
+                                icon: user.user.displayAvatarURL
+                            },
+                            fields: [
+                                { name: "User", value: user.user.tag },
+                                { name: "Kicked By", value: msg.author.tag },
+                                { name: "Reason Provided", value: reason || "No reason provided by kicker." }
+                            ],
+                            footer: `Case #${config[0].mod_log_cases}`
+                        }));
+                    });
                 }).catch(() => {
                     msg.channel.send(":x: This user cannot be kicked.");
                 });

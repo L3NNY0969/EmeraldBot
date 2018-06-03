@@ -17,7 +17,7 @@ module.exports = class Eval {
             const m = await msg.channel.send(`Evaluating \`${toEval}\``);
             try {
                 let result = eval(toEval);
-                if (typeof result !== "string") { result = await require("util").inspect(result, { maxDepth: 0, showHidden: true }); }
+                if (typeof result !== "string") { result = await require("util").inspect(result, 0, true); }
                 if (result.length > 1024) {
                     const haste = await bot.haste(result.replace(new RegExp(bot.token, "g"), "BAD BOI"));
                     m.edit(bot.embed({
